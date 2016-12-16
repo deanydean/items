@@ -1,0 +1,22 @@
+//
+// Main build file for AtoMS
+apply plugin: "java"
+
+task run (type: JavaExec, dependsOn: classes){
+    if(project.hasProperty('appargs')){
+        args(appargs.split(','))
+    }
+    description = "Run AtoMS Service"
+    main = "org.oddcyb.atoms.DataService"
+    classpath = sourceSets.main.runtimeClasspath
+}
+ 
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "com.sparkjava:spark-core:2.5.3"
+    runtime "org.slf4j:slf4j-simple:1.7.21"
+}
