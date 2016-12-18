@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.oddcyb.atoms.stores;
+package org.oddcyb.atoms.store;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,7 +48,4 @@ public class HeapStore implements Store
     {
         return this.dataMap.remove(name);
     }
-    
-    
-    
 }

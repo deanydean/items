@@ -14,7 +14,7 @@ Run
 ---
 To run the microservice:
 
-$ gradle run
+$ java -jar build/libs/atoms.jar
 
 Use
 ---

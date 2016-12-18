@@ -10,7 +10,17 @@ task run (type: JavaExec, dependsOn: classes){
     main = "org.oddcyb.atoms.DataService"
     classpath = sourceSets.main.runtimeClasspath
 }
- 
+
+jar {
+    manifest {
+        attributes "Main-Class": "org.oddcyb.atoms.DataService"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
 
 repositories {
     mavenCentral()
@@ -20,3 +30,4 @@ dependencies {
     compile "com.sparkjava:spark-core:2.5.3"
     runtime "org.slf4j:slf4j-simple:1.7.21"
 }
+

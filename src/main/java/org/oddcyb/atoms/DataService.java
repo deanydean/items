@@ -17,8 +17,10 @@ package org.oddcyb.atoms;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.oddcyb.atoms.stores.HeapStore;
-import org.oddcyb.atoms.stores.Store;
+import org.oddcyb.atoms.handlers.StoreAdd;
+import org.oddcyb.atoms.handlers.StoreReplace;
+import org.oddcyb.atoms.store.HeapStore;
+import org.oddcyb.atoms.store.Store;
 import spark.Spark;
 
 /**
@@ -60,10 +62,9 @@ public class DataService
             this.store.read(req.params(NAME_PARAM)));
         Spark.delete(path, (req, resp) -> 
             this.store.delete(req.params(NAME_PARAM)));
-        Spark.post(path,   (req, resp) -> 
-            this.store.add(req.params(NAME_PARAM), req.body()));
-        Spark.put(path,    (req, resp) -> 
-            this.store.replace(req.params(NAME_PARAM), req.body()));
+        
+        Spark.put(path,  new StoreReplace(store));
+        Spark.post(path, new StoreAdd(store));
     }
     
     public static void main(String[] args)
