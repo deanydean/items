@@ -7,13 +7,13 @@ task run (type: JavaExec, dependsOn: classes){
         args(appargs.split(','))
     }
     description = "Run AtoMS Service"
-    main = "org.oddcyb.atoms.DataService"
+    main = "org.oddcyb.atoms.Start"
     classpath = sourceSets.main.runtimeClasspath
 }
 
 jar {
     manifest {
-        attributes "Main-Class": "org.oddcyb.atoms.DataService"
+        attributes "Main-Class": "org.oddcyb.atoms.Start"
     }
 
     from {
@@ -28,6 +28,8 @@ repositories {
 
 dependencies {
     compile "com.sparkjava:spark-core:2.5.3"
+    compile "net.sf.jopt-simple:jopt-simple:6.0-alpha-1"
+    compile "org.mongodb:mongodb-driver:3.4.0"
     runtime "org.slf4j:slf4j-simple:1.7.21"
 }
 

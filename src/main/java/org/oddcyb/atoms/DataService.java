@@ -41,11 +41,12 @@ public class DataService
      * Create a service located at the provided base path.
      * 
      * @param serviceBase the base path for the service
+     * @param store the store that holds that data for this service
      */
-    public DataService(String serviceBase)
+    public DataService(String serviceBase, Store store)
     {
         this.serviceBase = serviceBase;
-        this.store = new HeapStore();
+        this.store = store;
     }
     
     /**
@@ -67,8 +68,4 @@ public class DataService
         Spark.post(path, new StoreAdd(store));
     }
     
-    public static void main(String[] args)
-    {
-        new DataService(SERVICE_BASE).start();
-    }
 }
