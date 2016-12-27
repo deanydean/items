@@ -19,7 +19,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.oddcyb.atoms.handlers.StoreAdd;
 import org.oddcyb.atoms.handlers.StoreReplace;
-import org.oddcyb.atoms.store.HeapStore;
 import org.oddcyb.atoms.store.Store;
 import spark.Spark;
 
@@ -66,6 +65,14 @@ public class DataService
         
         Spark.put(path,  new StoreReplace(store));
         Spark.post(path, new StoreAdd(store));
+        
+        // Log exceptions
+        Spark.exception(Exception.class, (ex, req, resp) -> {
+            LOG.log(Level.WARNING, "Request {0} failed", req);
+            LOG.log(Level.WARNING, "Request error", ex);
+            
+            resp.status(500);
+        });
     }
     
 }

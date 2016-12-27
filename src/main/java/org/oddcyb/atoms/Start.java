@@ -18,6 +18,8 @@ package org.oddcyb.atoms;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.oddcyb.atoms.store.HeapStore;
+import org.oddcyb.atoms.store.MapDBStore;
+import org.oddcyb.atoms.store.MongoDBStore;
 import org.oddcyb.atoms.store.Store;
 
 /**
@@ -37,9 +39,21 @@ public class Start
         {
             store = new HeapStore();
         }
+        else if ( options.has("mapdb"))
+        {   
+            store = new MapDBStore(
+                options.valueOf("mapdb-file").toString(),
+                options.valueOf("mapdb-map").toString()
+            );
+        }
         else if ( options.has("mongodb") )
         {
-            throw new UnsupportedOperationException("Not implemented yet");
+            store = new MongoDBStore(
+                options.valueOf("mongodb-host").toString(),
+                (int) options.valueOf("mongodb-port"),
+                options.valueOf("mongodb-db").toString(),
+                options.valueOf("mongodb-col").toString()
+            );
         }
             
         new DataService(path, store).start();
@@ -51,15 +65,39 @@ public class Start
         
         parser.recognizeAlternativeLongOptions(true);
         
-        parser.accepts("path", "The base path for the service")
-            .withOptionalArg().defaultsTo(DataService.SERVICE_BASE);
+        parser.accepts("path", "Path for the service")
+            .withRequiredArg()
+            .defaultsTo(DataService.SERVICE_BASE);
         
-        parser.accepts("heap", "The service holds data on the heap");
+        parser.accepts("heap", "Hold data on the heap");
         
-        parser.accepts("mongodb", "The services holds data in mongodb");
+        parser.accepts("mapdb", "Hold data in mapdb");
         
-        parser.accepts("mongodb-url", "The URL for mongodb")
-            .requiredIf("mongodb");
+        parser.accepts("mapdb-file", "File to hold the mapdb")
+            .requiredIf("mapdb")
+            .withRequiredArg();
+        
+        parser.accepts("mapdb-map", "mapdb map name")
+            .requiredIf("mapdb")
+            .withRequiredArg();
+        
+        parser.accepts("mongodb", "Hold data in mongodb");
+        
+        parser.accepts("mongodb-host", "Hostname of the mongodb server")
+            .requiredIf("mongodb")
+            .withRequiredArg();
+        
+        parser.accepts("mongodb-port", "Port to connect to mongodb")
+            .requiredIf("mongodb")
+            .withRequiredArg().ofType(Integer.class);
+        
+        parser.accepts("mongodb-db", "mongodb database")
+            .requiredIf("mongodb")
+            .withRequiredArg();
+        
+        parser.accepts("mongodb-col", "mongodb collection")
+            .requiredIf("mongodb")
+            .withRequiredArg();
         
         return parser.parse(args);
     }
