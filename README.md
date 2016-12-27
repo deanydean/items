@@ -12,9 +12,18 @@ $ gradle build
 
 Run
 ---
-To run the microservice:
+To run the microservice without any persistence:
 
 $ java -jar build/libs/atoms.jar
+
+To run the microservice backed by a MapDB map:
+
+$ java -jar build/libs/atoms.jar --mapdb --mapdb-file atoms.db --mapdb-map atoms
+
+To run the microservice backed by a MongoDB collection:
+
+$ java -jar build/libs/atoms.jar --mongodb --mongdb-host localhost \
+    --mongodb-port 27017 --mongo-db atoms --mongodb-col test-collection
 
 Use
 ---
