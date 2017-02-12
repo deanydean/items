@@ -38,10 +38,10 @@ dependencies {
     runtime "org.slf4j:slf4j-simple:1.7.21"
 }
 
-/*
- * Gets the version name from the latest Git tag
+/**
+ * Gets the version name from the latest Git tag.
  */
-def getVersionName = { ->
+def getVersion = { ->
     def stdout = new ByteArrayOutputStream()
     exec {
         commandLine 'git', 'describe', '--tags'
@@ -50,3 +50,5 @@ def getVersionName = { ->
         
     return stdout.toString().trim()
 }
+
+
