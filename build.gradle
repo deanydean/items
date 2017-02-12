@@ -3,6 +3,15 @@
 apply plugin: "java"
 apply plugin: "maven"
 
+def getVersion = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe', '--tags'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
 group = "org.oddcyb"
 version = getVersion()
 
@@ -39,17 +48,6 @@ dependencies {
     runtime "org.slf4j:slf4j-simple:1.7.21"
 }
 
-/**
- * Gets the version name from the latest Git tag.
- */
-def getVersion = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'describe', '--tags'
-        standardOutput = stdout
-    }
-        
-    return stdout.toString().trim()
-}
+
 
 

@@ -29,7 +29,7 @@ Use
 ---
 To use the service, access the URL:
 
-http://localhost:4567/atoms/[name]
+http://localhost:9999/atoms/[name]
 
 where [name] is the data you want to access.
 

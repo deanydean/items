@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Matt Dean
+ * Copyright 2016, 2017 Matt Dean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class StoreAdd implements Route
     @Override
     public Object handle(Request req, Response resp) throws Exception
     {
-        String name = req.params(AtomsService.NAME_PARAM);
+        String name = req.splat()[0];
         String object = req.body();
         
         Object exists = this.store.add(name, object);

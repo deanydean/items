@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Matt Dean
+ * Copyright 2016, 2017 Matt Dean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.oddcyb.atoms.store.HeapStore;
 import org.oddcyb.atoms.store.MapDBStore;
 import org.oddcyb.atoms.store.MongoDBStore;
 import org.oddcyb.atoms.store.Store;
+import spark.Spark;
 
 /**
  * Start the AtoMS services.
@@ -33,6 +34,7 @@ public class Start
         OptionSet options = parseArguments(args);
         
         String path = options.valueOf("path").toString();
+        int port = (int) options.valueOf("port");
         
         Store store = null;
         if ( options.has("heap") )
@@ -55,7 +57,8 @@ public class Start
                 options.valueOf("mongodb-col").toString()
             );
         }
-            
+     
+        Spark.port(port);
         new AtomsService(path, store).start();
     }
 
@@ -68,6 +71,11 @@ public class Start
         parser.accepts("path", "Path for the service")
             .withRequiredArg()
             .defaultsTo(AtomsService.SERVICE_BASE);
+        
+        parser.accepts("port", "Port to listen on")
+            .withRequiredArg()
+            .ofType(Integer.class)
+            .defaultsTo(9999);
         
         parser.accepts("heap", "Hold data on the heap");
         

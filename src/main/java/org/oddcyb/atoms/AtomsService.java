@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Matt Dean
+ * Copyright 2016, 2017 Matt Dean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,15 +53,15 @@ public class AtomsService
      */
     public void start()
     {
-        String path = this.serviceBase+"/"+NAME_PARAM;
+        String path = this.serviceBase+"/*";
         
         LOG.log(Level.INFO, "Starting data service at {0}", path);
         
         // Register the HTTP method -> store function mappings
         Spark.get(path,    (req, resp) -> 
-            this.store.read(req.params(NAME_PARAM)));
+            this.store.read(req.splat()[0]));
         Spark.delete(path, (req, resp) -> 
-            this.store.delete(req.params(NAME_PARAM)));
+            this.store.delete(req.splat()[0]));
         
         Spark.put(path,  new StoreReplace(store));
         Spark.post(path, new StoreAdd(store));
