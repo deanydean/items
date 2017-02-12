@@ -56,7 +56,7 @@ public class Start
             );
         }
             
-        new DataService(path, store).start();
+        new AtomsService(path, store).start();
     }
 
     public static OptionSet parseArguments(String[] args)
@@ -67,7 +67,7 @@ public class Start
         
         parser.accepts("path", "Path for the service")
             .withRequiredArg()
-            .defaultsTo(DataService.SERVICE_BASE);
+            .defaultsTo(AtomsService.SERVICE_BASE);
         
         parser.accepts("heap", "Hold data on the heap");
         

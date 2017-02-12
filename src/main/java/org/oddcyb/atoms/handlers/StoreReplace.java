@@ -15,7 +15,7 @@
  */
 package org.oddcyb.atoms.handlers;
 
-import org.oddcyb.atoms.DataService;
+import org.oddcyb.atoms.AtomsService;
 import org.oddcyb.atoms.store.Store;
 import spark.Request;
 import spark.Response;
@@ -37,7 +37,7 @@ public class StoreReplace implements Route
     @Override
     public Object handle(Request req, Response resp) throws Exception 
     {
-        String name = req.params(DataService.NAME_PARAM);
+        String name = req.params(AtomsService.NAME_PARAM);
         String object = req.body();
         
         return this.store.replace(name, object);

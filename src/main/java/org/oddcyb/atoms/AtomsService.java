@@ -25,10 +25,10 @@ import spark.Spark;
 /**
  * Service that holds data units.
  */
-public class DataService 
+public class AtomsService 
 {
     private static final Logger LOG = 
-        Logger.getLogger(DataService.class.getName());
+        Logger.getLogger(AtomsService.class.getName());
     
     public static final String SERVICE_BASE = "/atoms";
     public static final String NAME_PARAM = ":name";
@@ -42,7 +42,7 @@ public class DataService
      * @param serviceBase the base path for the service
      * @param store the store that holds that data for this service
      */
-    public DataService(String serviceBase, Store store)
+    public AtomsService(String serviceBase, Store store)
     {
         this.serviceBase = serviceBase;
         this.store = store;
