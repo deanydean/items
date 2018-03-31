@@ -15,6 +15,8 @@
  */
 package org.oddcyb.atoms.store;
 
+import java.util.List;
+
 /**
  * A store of objects.
  */
@@ -54,5 +56,6 @@ public interface Store
      * @return the object that was deleted or null if the object did not exist
      */
     public Object delete(String name);
-    
+ 
+    public List search(String spec);
 }

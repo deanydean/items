@@ -15,6 +15,7 @@
  */
 package org.oddcyb.atoms.store;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -47,5 +48,11 @@ public class HeapStore implements Store
     public Object delete(String name)
     {
         return this.dataMap.remove(name);
+    }
+    
+    @Override
+    public List search(String spec)
+    {
+        return null;
     }
 }

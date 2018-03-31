@@ -30,8 +30,17 @@ jar {
     }
 
     from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-        configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.compile.collect { 
+            it.isDirectory() ? it : zipTree(it).matching {
+                exclude { it.path.contains("META-INF") }
+            }
+        }
+        
+        configurations.runtime.collect {
+            it.isDirectory() ? it : zipTree(it).matching {
+                exclude { it.path.contains("META-INF") }
+            }
+        }
     }
 
     archiveName = "atoms.jar"
@@ -42,12 +51,12 @@ repositories {
 }
 
 dependencies {
-    compile "com.sparkjava:spark-core:2.5.3"
-    compile "net.sf.jopt-simple:jopt-simple:6.0-alpha-1"
+    compile "com.sparkjava:spark-core:2.7.2"
+    compile "net.sf.jopt-simple:jopt-simple:6.0-alpha-2"
     compile "com.mashape.unirest:unirest-java:1.4.9"
-    compile "org.mapdb:mapdb:3.0.2"
-    compile "org.mongodb:mongodb-driver:3.4.0"
-    runtime "org.slf4j:slf4j-simple:1.7.21"
+    compile "org.mapdb:mapdb:3.0.5"
+    compile "org.mongodb:mongodb-driver:3.6.3"
+    runtime "org.slf4j:slf4j-simple:1.7.25"
 }
 
 

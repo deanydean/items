@@ -15,6 +15,7 @@
  */
 package org.oddcyb.atoms.store;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -61,6 +62,11 @@ public class MapDBStore implements Store
     public Object delete(String name)
     {
         return this.getMap().remove(name);
+    }
+    
+    public List search(String spec)
+    {
+        return null;
     }
     
     private ConcurrentMap<String,Object> getMap()
