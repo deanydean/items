@@ -15,10 +15,9 @@
  */
 package org.oddcyb.atoms.store;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * A Store that is held on the heap.
@@ -52,8 +51,15 @@ public class HeapStore implements Store
     }
     
     @Override
-    public List search(String spec)
+    public Map<String,Object> search(String spec)
     {
-        return this.dataMap.values().stream().collect(Collectors.toList());
+        Map<String,Object> result = new HashMap<>();
+        
+        // TODO match spec
+        this.dataMap.entrySet().forEach( (entry) -> {
+            result.put(entry.getKey(), entry.getValue());
+        });
+        
+        return result;
     }
 }

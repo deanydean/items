@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, 2017 Matt Dean
+ * Copyright 2016, 2018 Matt Dean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package org.oddcyb.atoms.handlers;
 
-import org.oddcyb.atoms.AtomsService;
+import com.google.gson.Gson;
 import org.oddcyb.atoms.store.Store;
 import spark.Request;
 import spark.Response;
@@ -26,8 +26,9 @@ import spark.Route;
  */
 public class StoreReplace implements Route
 {
-    
+
     private final Store store;
+    private final Gson gson = new Gson();
     
     public StoreReplace(Store store)
     {
@@ -38,9 +39,9 @@ public class StoreReplace implements Route
     public Object handle(Request req, Response resp) throws Exception 
     {
         String name = req.splat()[0];
-        String object = req.body();
+        String json = req.body();
         
-        return this.store.replace(name, object);
+        return this.store.replace(name, this.gson.fromJson(json, Object.class));
     }
     
 }

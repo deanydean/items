@@ -15,6 +15,7 @@
  */
 package org.oddcyb.atoms.handlers;
 
+import com.google.gson.Gson;
 import org.oddcyb.atoms.store.Store;
 import spark.Request;
 import spark.Response;
@@ -26,6 +27,7 @@ import spark.Route;
 public class StoreGet implements Route
 {
     private final Store store;
+    private final Gson gson = new Gson();
     
     public StoreGet(Store store)
     {
@@ -33,19 +35,19 @@ public class StoreGet implements Route
     }
     
     @Override
-    public Object handle(Request req, Response resp) throws Exception
+    public String handle(Request req, Response resp) throws Exception
     {
         String name = req.splat()[0];
         
         if ( name.equals("*") )
         {
             // Get all
-            return this.store.search(name);
+            return gson.toJson(this.store.search(name));
         }
         else
         {
             // Get the named object
-            return this.store.read(name);
+            return gson.toJson(this.store.read(name));
         }
     }
 

@@ -62,8 +62,7 @@ public class AtomsService
         Spark.get(path, new StoreGet(store));
         Spark.put(path,  new StoreReplace(store));
         Spark.post(path, new StoreAdd(store));
-        Spark.delete(path, (req, resp) -> 
-            this.store.delete(req.splat()[0]));
+        Spark.delete(path, (req, resp) -> this.store.delete(req.splat()[0]));
         
         // Log exceptions
         Spark.exception(Exception.class, (ex, req, resp) -> {

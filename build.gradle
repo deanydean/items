@@ -51,6 +51,7 @@ repositories {
 }
 
 dependencies {
+    compile "com.google.code.gson:gson:2.8.2"
     compile "com.sparkjava:spark-core:2.7.2"
     compile "net.sf.jopt-simple:jopt-simple:6.0-alpha-2"
     compile "com.mashape.unirest:unirest-java:1.4.9"

@@ -15,6 +15,7 @@
  */
 package org.oddcyb.atoms.handlers;
 
+import com.google.gson.Gson;
 import org.oddcyb.atoms.store.Store;
 import spark.Request;
 import spark.Response;
@@ -29,6 +30,7 @@ public class StoreAdd implements Route
         "<html><body>201 Created</body></html>";
 
     private final Store store;
+    private final Gson gson = new Gson();
     
     public StoreAdd(Store store)
     {
@@ -39,9 +41,9 @@ public class StoreAdd implements Route
     public Object handle(Request req, Response resp) throws Exception
     {
         String name = req.splat()[0];
-        String object = req.body();
+        String json = req.body();
         
-        Object exists = this.store.add(name, object);
+        Object exists = this.store.add(name, gson.fromJson(json, Object.class));
         
         if ( exists == null )
         {
