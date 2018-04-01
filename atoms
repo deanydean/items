@@ -41,4 +41,4 @@ then
     exit 1
 fi
 
-exec java -jar ${ATOMS_JAR} ${ATOMS_OPTS}
+exec java -jar ${ATOMS_JAR} ${ATOMS_OPTS} 

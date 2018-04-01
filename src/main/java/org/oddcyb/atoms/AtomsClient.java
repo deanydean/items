@@ -3,11 +3,12 @@
  */
 package org.oddcyb.atoms;
 
+import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.async.Callback;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import java.util.concurrent.Callable;
+import java.util.List;
 import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -90,6 +91,21 @@ public class AtomsClient
     {
         Unirest.delete(this.url+"/"+name)
             .asStringAsync(new AsyncCallback<>(onComplete, onFail, onCancel));
+    }
+    
+    public List<String> search(String spec)
+    {
+        try
+        {
+            String result = Unirest.get(this.url+"/"+spec).asString().getBody();
+            return new Gson().fromJson(result, List.class);
+        }
+        catch ( UnirestException ue )
+        {
+            LOG.log(Level.WARNING, "Failed to find {0} : {1}",
+                    new Object[]{ spec, ue });
+            throw new CompletionException("Failed to find "+spec, ue);
+        }
     }
     
     private class AsyncCallback<T> implements Callback<T>

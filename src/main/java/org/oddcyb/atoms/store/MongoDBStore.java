@@ -19,6 +19,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import java.util.Map;
 import java.util.logging.Logger;
 import org.bson.Document;
 
@@ -107,5 +108,11 @@ public class MongoDBStore implements Store
     
         return existing;
     }
-    
+  
+    @Override
+    public Map<String,Object> search(String spec)
+    {
+        // TODO implement mongo search
+        return null;
+    }
 }

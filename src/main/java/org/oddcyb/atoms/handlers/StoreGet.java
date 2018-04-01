@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, 2017 Matt Dean
+ * Copyright 2018 Matt Dean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,36 +24,30 @@ import spark.Route;
 /**
  *
  */
-public class StoreAdd implements Route
+public class StoreGet implements Route
 {
-    public static final String SUCCESS_RESPONSE = 
-        "<html><body>201 Created</body></html>";
-
     private final Store store;
     private final Gson gson = new Gson();
     
-    public StoreAdd(Store store)
+    public StoreGet(Store store)
     {
         this.store = store;
     }
     
     @Override
-    public Object handle(Request req, Response resp) throws Exception
+    public String handle(Request req, Response resp) throws Exception
     {
         String name = req.splat()[0];
-        String json = req.body();
         
-        Object exists = this.store.add(name, gson.fromJson(json, Object.class));
-        
-        if ( exists == null )
+        if ( name.equals("*") )
         {
-            resp.status(201);
-            return SUCCESS_RESPONSE;
+            // Get all
+            return gson.toJson(this.store.search(name));
         }
         else
         {
-            resp.status(409);
-            return exists;
+            // Get the named object
+            return gson.toJson(this.store.read(name));
         }
     }
 

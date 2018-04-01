@@ -18,6 +18,7 @@ package org.oddcyb.atoms;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.oddcyb.atoms.handlers.StoreAdd;
+import org.oddcyb.atoms.handlers.StoreGet;
 import org.oddcyb.atoms.handlers.StoreReplace;
 import org.oddcyb.atoms.store.Store;
 import spark.Spark;
@@ -56,15 +57,12 @@ public class AtomsService
         String path = this.serviceBase+"/*";
         
         LOG.log(Level.INFO, "Starting data service at {0}", path);
-        
+
         // Register the HTTP method -> store function mappings
-        Spark.get(path,    (req, resp) -> 
-            this.store.read(req.splat()[0]));
-        Spark.delete(path, (req, resp) -> 
-            this.store.delete(req.splat()[0]));
-        
+        Spark.get(path, new StoreGet(store));
         Spark.put(path,  new StoreReplace(store));
         Spark.post(path, new StoreAdd(store));
+        Spark.delete(path, (req, resp) -> this.store.delete(req.splat()[0]));
         
         // Log exceptions
         Spark.exception(Exception.class, (ex, req, resp) -> {

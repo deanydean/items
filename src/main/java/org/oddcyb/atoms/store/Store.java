@@ -15,6 +15,8 @@
  */
 package org.oddcyb.atoms.store;
 
+import java.util.Map;
+
 /**
  * A store of objects.
  */
@@ -55,4 +57,11 @@ public interface Store
      */
     public Object delete(String name);
     
+    /**
+     * Search for objects in the store.
+     * 
+     * @param spec the search specification
+     * @return the objects that match the search spec
+     */
+    public Map<String,Object> search(String spec);
 }

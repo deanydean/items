@@ -15,7 +15,10 @@
  */
 package org.oddcyb.atoms.store;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
@@ -61,6 +64,19 @@ public class MapDBStore implements Store
     public Object delete(String name)
     {
         return this.getMap().remove(name);
+    }
+    
+    @Override
+    public Map<String, Object> search(String spec)
+    {
+        Map<String,Object> result = new HashMap<>();
+        
+        // TODO match spec
+        getMap().entrySet().forEach( (entry) -> {
+            result.put(entry.getKey(), entry.getValue());
+        });
+        
+        return result;
     }
     
     private ConcurrentMap<String,Object> getMap()
