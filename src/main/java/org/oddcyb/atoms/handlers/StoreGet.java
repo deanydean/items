@@ -15,6 +15,8 @@
  */
 package org.oddcyb.atoms.handlers;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.oddcyb.atoms.store.Store;
 import spark.Request;
 import spark.Response;
@@ -25,7 +27,6 @@ import spark.Route;
  */
 public class StoreGet implements Route
 {
-
     private final Store store;
     
     public StoreGet(Store store)
