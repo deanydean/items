@@ -15,8 +15,6 @@
  */
 package org.oddcyb.atoms.handlers;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.oddcyb.atoms.store.Store;
 import spark.Request;
 import spark.Response;

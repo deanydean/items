@@ -17,7 +17,6 @@ package org.oddcyb.atoms;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.oddcyb.atoms.data.EntryListEncoder;
 import org.oddcyb.atoms.handlers.StoreAdd;
 import org.oddcyb.atoms.handlers.StoreGet;
 import org.oddcyb.atoms.handlers.StoreReplace;
