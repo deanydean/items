@@ -59,6 +59,19 @@ public class Start
         }
      
         Spark.port(port);
+        
+        if ( options.has("secure") )
+        {
+            // Enable security
+            Spark.secure(
+                options.valueOf("keystore").toString(), 
+                options.valueOf("keystore-pwd").toString(), 
+                options.valueOf("cert-alias").toString(), 
+                options.valueOf("truststore").toString(),
+                options.valueOf("truststore-pwd").toString(), 
+                true);
+        }
+        
         new AtomsService(path, store).start();
     }
 
@@ -76,6 +89,31 @@ public class Start
             .withRequiredArg()
             .ofType(Integer.class)
             .defaultsTo(9999);
+        
+        parser.accepts("secure", "Enable secure mode")
+            .withRequiredArg()
+            .ofType(Boolean.class)
+            .defaultsTo(false);
+        
+        parser.accepts("keystore", "Java keystore")
+            .withRequiredArg()
+            .defaultsTo("./etc/keystore");
+        
+        parser.accepts("keystore-pwd-file", "File containing keystore pwd")
+            .withRequiredArg()
+            .defaultsTo("./etc/keystore-pwd");
+        
+        parser.accepts("cert-alias", "The alias of the server cert")
+            .withRequiredArg()
+            .defaultsTo("atoms-service-cert");
+        
+        parser.accepts("truststore", "Java keystore containing keys")
+            .withRequiredArg()
+            .defaultsTo("./etc/truststore");
+        
+        parser.accepts("truststore-pwd-file", "File containing truststore pwd")
+            .withRequiredArg()
+            .defaultsTo("./etc/truststore-pwd");
         
         parser.accepts("heap", "Hold data on the heap");
         
