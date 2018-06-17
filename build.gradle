@@ -3,17 +3,8 @@
 apply plugin: "java"
 apply plugin: "maven"
 
-def getVersion = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'describe', '--tags'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
-}
-
 group = "org.oddcyb"
-version = getVersion()
+version = "1.0.0-SNAPSHOT"
 
 task run (type: JavaExec, dependsOn: classes){
     if(project.hasProperty('appargs')){
@@ -47,6 +38,7 @@ jar {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
