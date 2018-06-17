@@ -2,3 +2,5 @@ build/
 .gradle
 .nb-gradle
 var
+etc/keystore
+etc/keystore-pwd

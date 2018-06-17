@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, 2017 Matt Dean
+ * Copyright 2016, 2018 Matt Dean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,11 @@
  */
 package org.oddcyb.atoms;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.oddcyb.atoms.store.HeapStore;
@@ -28,8 +33,9 @@ import spark.Spark;
  */
 public class Start 
 {
+    private static final Logger LOG = Logger.getLogger(Start.class.getName());
     
-    public void startServices(String[] args)
+    public void startServices(String[] args) throws IOException
     {
         OptionSet options = parseArguments(args);
         
@@ -65,10 +71,12 @@ public class Start
             // Enable security
             Spark.secure(
                 options.valueOf("keystore").toString(), 
-                options.valueOf("keystore-pwd").toString(), 
+                new String(Files.readAllBytes(Paths.get(
+                        options.valueOf("keystore-pwd-file").toString()))),
                 options.valueOf("cert-alias").toString(), 
                 options.valueOf("truststore").toString(),
-                options.valueOf("truststore-pwd").toString(), 
+                new String(Files.readAllBytes(Paths.get(
+                        options.valueOf("truststore-pwd-file").toString()))),
                 true);
         }
         
@@ -90,10 +98,7 @@ public class Start
             .ofType(Integer.class)
             .defaultsTo(9999);
         
-        parser.accepts("secure", "Enable secure mode")
-            .withRequiredArg()
-            .ofType(Boolean.class)
-            .defaultsTo(false);
+        parser.accepts("secure", "Enable secure mode");
         
         parser.accepts("keystore", "Java keystore")
             .withRequiredArg()
@@ -107,13 +112,13 @@ public class Start
             .withRequiredArg()
             .defaultsTo("atoms-service-cert");
         
-        parser.accepts("truststore", "Java keystore containing keys")
+        parser.accepts("truststore", "Java keystore containing trusted certs")
             .withRequiredArg()
-            .defaultsTo("./etc/truststore");
+            .defaultsTo("./etc/keystore");
         
         parser.accepts("truststore-pwd-file", "File containing truststore pwd")
             .withRequiredArg()
-            .defaultsTo("./etc/truststore-pwd");
+            .defaultsTo("./etc/keystore-pwd");
         
         parser.accepts("heap", "Hold data on the heap");
         
@@ -150,7 +155,14 @@ public class Start
     
     public static void main(String[] args)
     {
-        new Start().startServices(args);
+        try
+        {
+            new Start().startServices(args);
+        }
+        catch ( Throwable t )
+        {
+            LOG.log(Level.SEVERE, "Failed to start atoms : {0}", t);
+        }
     }
     
 }

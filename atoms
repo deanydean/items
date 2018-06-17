@@ -7,7 +7,7 @@ ATOMS_HOME="${ATOMS_HOME:-$(readlink -m "$(dirname $0)")}"
 # Set the defaults
 CONFIG_FILE="${ATOMS_HOME}/etc/atoms.conf"
 ATOMS_JAR="${ATOMS_HOME}/build/libs/atoms.jar"
-ATOMS_OPTS=""
+ATOMS_ARGS=""
 
 # Read CLI params
 while [ -n "$1" ]
@@ -22,7 +22,8 @@ do
             shift
             ;;
         *)
-            echo "Unknown argument $1, ignoring"
+            ATOMS_ARGS="${ATOM_ARGS} $1"
+            ;;
     esac
     shift
 done
@@ -41,4 +42,4 @@ then
     exit 1
 fi
 
-exec java -jar ${ATOMS_JAR} ${ATOMS_OPTS} 
+exec java ${JAVA_OPTS} -jar ${ATOMS_JAR} ${ATOMS_OPTS} ${ATOMS_ARGS} 
