@@ -18,12 +18,16 @@ package org.oddcyb.atoms.store;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 /**
  * A Store that is held on the heap.
  */
 public class HeapStore implements Store
 {
+    private static final Logger LOG =
+        Logger.getLogger(HeapStore.class.getName());
+
     private final Map<String,Object> dataMap = new ConcurrentHashMap<>();
 
     @Override
@@ -54,11 +58,18 @@ public class HeapStore implements Store
     public Map<String,Object> search(String spec)
     {
         Map<String,Object> result = new HashMap<>();
-        
-        // TODO match spec
-        this.dataMap.entrySet().forEach( (entry) -> {
-            result.put(entry.getKey(), entry.getValue());
-        });
+
+        if ( spec.equalsIgnoreCase(Store.SEARCH_ALL) )
+        {
+            this.dataMap.entrySet().forEach( (entry) -> {
+                result.put(entry.getKey(), entry.getValue());
+            });
+        }
+        else
+        {
+            // TODO match spec
+            LOG.warning("Non-all search specs not implemented");
+        }
         
         return result;
     }

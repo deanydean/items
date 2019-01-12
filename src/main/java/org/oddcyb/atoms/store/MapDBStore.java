@@ -15,13 +15,13 @@
  */
 package org.oddcyb.atoms.store;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Collectors;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  *
@@ -71,10 +71,13 @@ public class MapDBStore implements Store
     {
         Map<String,Object> result = new HashMap<>();
         
-        // TODO match spec
-        getMap().entrySet().forEach( (entry) -> {
-            result.put(entry.getKey(), entry.getValue());
-        });
+        if ( spec.equalsIgnoreCase(Store.SEARCH_ALL) )
+        {
+            getMap().entrySet().forEach((entry) -> {
+                result.put(entry.getKey(), entry.getValue());
+            });
+        }
+        // TODO - Use spec to find results
         
         return result;
     }

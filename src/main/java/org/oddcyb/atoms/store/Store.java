@@ -22,6 +22,10 @@ import java.util.Map;
  */
 public interface Store 
 {
+
+    public static final String SEARCH_ALL = "*";
+
+    public static final String NOT_FOUND = "Not Found";
     
     /**
      * Read an object from the store.
