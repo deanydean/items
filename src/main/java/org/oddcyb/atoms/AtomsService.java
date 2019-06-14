@@ -54,16 +54,20 @@ public class AtomsService
      */
     public void start()
     {
-        String path = this.serviceBase+"/*";
+        String base = this.serviceBase;
         
-        LOG.log(Level.INFO, "Starting data service at {0}", path);
+        LOG.log(Level.INFO, "Starting data service at {0}", base);
 
         // Register the HTTP method -> store function mappings
-        Spark.get(path, new StoreGet(store));
-        Spark.put(path,  new StoreReplace(store));
-        Spark.post(path, new StoreAdd(store));
-        Spark.delete(path, (req, resp) -> this.store.delete(req.splat()[0]));
-        
+        Spark.path(base, () ->
+        {
+            Spark.get("/*", new StoreGet(store));
+            Spark.put("/*", new StoreReplace(store));
+            Spark.post("/*", new StoreAdd(store));
+            Spark.delete("/*",
+                    (req, resp) -> this.store.delete(req.splat()[0]));
+        });
+
         // Log exceptions
         Spark.exception(Exception.class, (ex, req, resp) -> {
             LOG.log(Level.WARNING, "Request {0} failed", req);

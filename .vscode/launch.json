@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug (Launch) - Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-Start<atoms>",
+            "request": "launch",
+            "mainClass": "org.oddcyb.atoms.Start",
+            "projectName": "atoms",
+            "args": "--mapdb --mapdb-file ${workspaceFolder}/var/atoms.db --mapdb-map atoms"
+        }
+    ]
+}
