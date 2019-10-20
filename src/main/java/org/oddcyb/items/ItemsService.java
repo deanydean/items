@@ -59,6 +59,24 @@ public class ItemsService
         LOG.log(Level.INFO, "Starting data service at {0}", base);
 
         // Register the HTTP method -> store function mappings
+        // /items/objects/*  <- all Objects
+        // TODO Remove this (not really needed)
+        Spark.path(base+"/objects", () ->
+        {
+            Spark.get("/*", new StoreGet(store));
+            Spark.put("/*", new StoreReplace(store));
+            Spark.post("/*", new StoreAdd(store));
+            Spark.delete("/*",
+                    (req, resp) -> this.store.delete(req.splat()[0]));
+        });
+
+        // /items/maps/*     <- all Map types
+        // /items/lists/*    <- all List types
+        // /items/queues/*   <- all Queue types
+        // /items/deques/*   <- all Deque types
+        // /items/drops/*    <- all Drop types (timeoutable, single-retrieve)
+
+        // /items/<anything> <- anything
         Spark.path(base, () ->
         {
             Spark.get("/*", new StoreGet(store));
