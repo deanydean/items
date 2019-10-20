@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.oddcyb.atoms;
+package org.oddcyb.items;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,14 +22,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import org.oddcyb.atoms.store.HeapStore;
-import org.oddcyb.atoms.store.MapDBStore;
-import org.oddcyb.atoms.store.MongoDBStore;
-import org.oddcyb.atoms.store.Store;
+import org.oddcyb.items.store.HeapStore;
+import org.oddcyb.items.store.MapDBStore;
+import org.oddcyb.items.store.MongoDBStore;
+import org.oddcyb.items.store.Store;
 import spark.Spark;
 
 /**
- * Start the AtoMS services.
+ * Start the IteMS services.
  */
 public class Start 
 {
@@ -80,7 +80,7 @@ public class Start
                 true);
         }
         
-        new AtomsService(path, store).start();
+        new ItemsService(path, store).start();
     }
 
     public static OptionSet parseArguments(String[] args)
@@ -91,7 +91,7 @@ public class Start
         
         parser.accepts("path", "Path for the service")
             .withRequiredArg()
-            .defaultsTo(AtomsService.SERVICE_BASE);
+            .defaultsTo(ItemsService.SERVICE_BASE);
         
         parser.accepts("port", "Port to listen on")
             .withRequiredArg()
@@ -110,7 +110,7 @@ public class Start
         
         parser.accepts("cert-alias", "The alias of the server cert")
             .withRequiredArg()
-            .defaultsTo("atoms-service-cert");
+            .defaultsTo("items-service-cert");
         
         parser.accepts("truststore", "Java keystore containing trusted certs")
             .withRequiredArg()
@@ -161,7 +161,7 @@ public class Start
         }
         catch ( Throwable t )
         {
-            LOG.log(Level.SEVERE, "Failed to start atoms : {0}", t);
+            LOG.log(Level.SEVERE, "Failed to start items : {0}", t);
         }
     }
     

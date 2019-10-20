@@ -1,5 +1,5 @@
 #
-# Copyright 2016, 2017 Matt Dean
+# Copyright 2016, 2019, Matt Dean
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,30 +17,30 @@ FROM gradle
 
 EXPOSE 9999
 
-ENV ATOMS_HOME=/opt/atoms
+ENV ITEMS_HOME=/opt/items
 
 # Build everything we need
-ADD src ${ATOMS_HOME}/src
-ADD build.gradle ${ATOMS_HOME}/build.gradle
-ENV GRADLE_USER_HOME=${ATOMS_HOME}
-WORKDIR ${ATOMS_HOME}
-RUN mkdir -p "${ATOMS_HOME}/.gradle" && \
+ADD src ${ITEMS_HOME}/src
+ADD build.gradle ${ITEMS_HOME}/build.gradle
+ENV GRADLE_USER_HOME=${ITEMS_HOME}
+WORKDIR ${ITEMS_HOME}
+RUN mkdir -p "${ITEMS_HOME}/.gradle" && \
     echo "org.gradle.daemon=false" >> \
-        ${ATOMS_HOME}/.gradle/gradle.properties && \
+        ${ITEMS_HOME}/.gradle/gradle.properties && \
     gradle build
-RUN mkdir -p ${ATOMS_HOME}/lib && \
-    cp build/libs/atoms.jar ${ATOMS_HOME}/lib/atoms.jar && \
+RUN mkdir -p ${ITEMS_HOME}/lib && \
+    cp build/libs/items.jar ${ITEMS_HOME}/lib/items.jar && \
     rm -rf build .gradle
 
 # Set up the runtime environment
-RUN mkdir -p ${ATOMS_HOME}/var
-ADD etc/atoms.conf ${ATOMS_HOME}/etc/atoms.conf
-ADD atoms ${ATOMS_HOME}/atoms
+RUN mkdir -p ${ITEMS_HOME}/var
+ADD etc/items.conf ${ITEMS_HOME}/etc/items.conf
+ADD items ${ITEMS_HOME}/items
 
 # Set the runtime user
-RUN useradd --system --home ${ATOMS_HOME} atoms
-RUN chown -R atoms ${ATOMS_HOME}
+RUN useradd --system --home ${ITEMS_HOME} items
+RUN chown -R items ${ITEMS_HOME}
 
 # Run the service
-USER atoms
-CMD ${ATOMS_HOME}/atoms --jar "${ATOMS_HOME}/lib/atoms.jar"
+USER items
+CMD ${ITEMS_HOME}/items --jar "${ITEMS_HOME}/lib/items.jar"

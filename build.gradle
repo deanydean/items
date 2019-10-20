@@ -1,5 +1,5 @@
 //
-// Main build file for AtoMS
+// Main build file for Items
 apply plugin: "java"
 apply plugin: "maven"
 
@@ -10,14 +10,14 @@ task run (type: JavaExec, dependsOn: classes){
     if(project.hasProperty('appargs')){
         args(appargs.split(','))
     }
-    description = "Run AtoMS Service"
-    main = "org.oddcyb.atoms.Start"
+    description = "Run Items Service"
+    main = "org.oddcyb.items.Start"
     classpath = sourceSets.main.runtimeClasspath
 }
 
 jar {
     manifest {
-        attributes "Main-Class": "org.oddcyb.atoms.Start"
+        attributes "Main-Class": "org.oddcyb.items.Start"
     }
 
     from {
@@ -34,7 +34,7 @@ jar {
         }
     }
 
-    archiveName = "atoms.jar"
+    archiveName = "items.jar"
 }
 
 repositories {
