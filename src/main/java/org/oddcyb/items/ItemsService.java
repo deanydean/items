@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, 2017 Matt Dean
+ * Copyright 2016, 2019, Matt Dean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.oddcyb.atoms;
+package org.oddcyb.items;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.oddcyb.atoms.handlers.StoreAdd;
-import org.oddcyb.atoms.handlers.StoreGet;
-import org.oddcyb.atoms.handlers.StoreReplace;
-import org.oddcyb.atoms.store.Store;
+import org.oddcyb.items.handlers.StoreAdd;
+import org.oddcyb.items.handlers.StoreGet;
+import org.oddcyb.items.handlers.StoreReplace;
+import org.oddcyb.items.store.Store;
 import spark.Spark;
 
 /**
  * Service that holds data units.
  */
-public class AtomsService 
+public class ItemsService 
 {
     private static final Logger LOG = 
-        Logger.getLogger(AtomsService.class.getName());
+        Logger.getLogger(ItemsService.class.getName());
     
-    public static final String SERVICE_BASE = "/atoms";
+    public static final String SERVICE_BASE = "/items";
     public static final String NAME_PARAM = ":name";
     
     private final String serviceBase;
@@ -43,7 +43,7 @@ public class AtomsService
      * @param serviceBase the base path for the service
      * @param store the store that holds that data for this service
      */
-    public AtomsService(String serviceBase, Store store)
+    public ItemsService(String serviceBase, Store store)
     {
         this.serviceBase = serviceBase;
         this.store = store;

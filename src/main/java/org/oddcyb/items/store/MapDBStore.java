@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Matt Dean
+ * Copyright 2016, 2019, Matt Dean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.oddcyb.atoms.store;
+package org.oddcyb.items.store;
 
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -24,8 +24,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- *
- * @author matt
+ * A store that is held in MapDB.
  */
 public class MapDBStore implements Store
 {

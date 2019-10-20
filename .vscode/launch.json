@@ -9,11 +9,11 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch)-Start<atoms>",
+            "name": "Debug (Launch)-Start<items>",
             "request": "launch",
-            "mainClass": "org.oddcyb.atoms.Start",
-            "projectName": "atoms",
-            "args": "--mapdb --mapdb-file ${workspaceFolder}/var/atoms.db --mapdb-map atoms"
+            "mainClass": "org.oddcyb.items.Start",
+            "projectName": "items",
+            "args": "--mapdb --mapdb-file ${workspaceFolder}/var/items.db --mapdb-map items"
         }
     ]
 }
