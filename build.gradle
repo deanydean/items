@@ -4,7 +4,7 @@ apply plugin: "java"
 apply plugin: "maven"
 
 group = "org.oddcyb"
-version = "1.0.0-SNAPSHOT"
+version = "2.0.0-SNAPSHOT"
 
 task run (type: JavaExec, dependsOn: classes){
     if(project.hasProperty('appargs')){
