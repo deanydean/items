@@ -17,11 +17,16 @@ package org.oddcyb.items;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.oddcyb.items.handlers.StoreAdd;
 import org.oddcyb.items.handlers.StoreGet;
 import org.oddcyb.items.handlers.StoreReplace;
+import org.oddcyb.items.store.InvalidTypeValueException;
+import org.oddcyb.items.store.Item;
 import org.oddcyb.items.store.Store;
-import spark.Spark;
+import org.oddcyb.items.store.TypedStore;
+
+import static spark.Spark.*;
 
 /**
  * Service that holds data units.
@@ -32,10 +37,9 @@ public class ItemsService
         Logger.getLogger(ItemsService.class.getName());
     
     public static final String SERVICE_BASE = "/items";
-    public static final String NAME_PARAM = ":name";
     
     private final String serviceBase;
-    private final Store store;
+    private final Store<Item> store;
     
     /**
      * Create a service located at the provided base path.
@@ -43,7 +47,7 @@ public class ItemsService
      * @param serviceBase the base path for the service
      * @param store the store that holds that data for this service
      */
-    public ItemsService(String serviceBase, Store store)
+    public ItemsService(String serviceBase, Store<Item> store)
     {
         this.serviceBase = serviceBase;
         this.store = store;
@@ -58,41 +62,50 @@ public class ItemsService
         
         LOG.log(Level.INFO, "Starting data service at {0}", base);
 
-        // Register the HTTP method -> store function mappings
-        // /items/objects/*  <- all Objects
-        // TODO Remove this (not really needed)
-        Spark.path(base+"/objects", () ->
-        {
-            Spark.get("/*", new StoreGet(store));
-            Spark.put("/*", new StoreReplace(store));
-            Spark.post("/*", new StoreAdd(store));
-            Spark.delete("/*",
-                    (req, resp) -> this.store.delete(req.splat()[0]));
-        });
-
+        // Link for map types
         // /items/maps/*     <- all Map types
-        // /items/lists/*    <- all List types
-        // /items/queues/*   <- all Queue types
-        // /items/deques/*   <- all Deque types
-        // /items/drops/*    <- all Drop types (timeoutable, single-retrieve)
+        link(base+"/maps", 
+             new TypedStore(this.store, TypedStore.Type.MAP));
 
-        // /items/<anything> <- anything
-        Spark.path(base, () ->
+        // Link for list types
+        // /items/lists/*    <- all List types
+        link(base+"/lists",
+             new TypedStore(this.store, TypedStore.Type.LIST));
+
+        // TODO - /items/queues/*   <- all Queue types
+        // TODO - /items/deques/*   <- all Deque types
+        // TODO - /items/drops/*    <- all Drop types (timeoutable, single-retrieve)
+
+        // /items/<anything> <- anything (read-only)
+        path(base, () ->
         {
-            Spark.get("/*", new StoreGet(store));
-            Spark.put("/*", new StoreReplace(store));
-            Spark.post("/*", new StoreAdd(store));
-            Spark.delete("/*",
-                    (req, resp) -> this.store.delete(req.splat()[0]));
+            get("/*", new StoreGet(this.store));
         });
 
-        // Log exceptions
-        Spark.exception(Exception.class, (ex, req, resp) -> {
+        // Handle exceptions and log errors
+        exception(InvalidTypeValueException.class, (ex, req, resp) -> {
+            LOG.log(Level.INFO, "Invalid type provided for {0}", 
+                    req.pathInfo());
+            resp.status(400); // Bad request
+            resp.body("Bad Request - Invalid type");
+        });
+        exception(Exception.class, (ex, req, resp) -> {
             LOG.log(Level.WARNING, "Request {0} failed", req);
             LOG.log(Level.WARNING, "Request error", ex);
-            
-            resp.status(500);
+            resp.status(500); // Internal server error
+            resp.body("Invalid server error");
         });
     }
-    
+
+    private static void link(String path, Store<Object> store)
+    {
+        path(path, () ->
+        {
+            get("/*", new StoreGet(store));
+            put("/*", new StoreReplace(store));
+            post("/*", new StoreAdd(store));
+            delete("/*", (req, resp) -> store.delete(req.splat()[0]));
+        });
+    }
+
 }

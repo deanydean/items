@@ -18,14 +18,12 @@ package org.oddcyb.items.store;
 import java.util.Map;
 
 /**
- * A store of objects.
+ * A store of items.
  */
-public interface Store 
+public interface Store<T>
 {
 
     public static final String SEARCH_ALL = "*";
-
-    public static final String NOT_FOUND = "Not Found";
     
     /**
      * Read an object from the store.
@@ -33,7 +31,7 @@ public interface Store
      * @param name the name of the object.
      * @return the object or null if the object did not exist
      */
-    public Object read(String name);
+    public T read(String name);
     
     /**
      * Add an object to the store.
@@ -43,7 +41,7 @@ public interface Store
      * @return the object that already exists in the store or null if the object
      * was added.
      */
-    public Object add(String name, Object value);
+    public T add(String name, T value);
     
     /**
      * Replace an object in the store.
@@ -51,7 +49,7 @@ public interface Store
      * @param newValue the replacement object
      * @return the object that was replaced or null if the object did not exist
      */
-    public Object replace(String name, Object newValue);
+    public T replace(String name, T newValue);
     
     /**
      * Delete an object from the store.
@@ -59,7 +57,7 @@ public interface Store
      * @param name the name of the object
      * @return the object that was deleted or null if the object did not exist
      */
-    public Object delete(String name);
+    public T delete(String name);
     
     /**
      * Search for objects in the store.
@@ -67,5 +65,5 @@ public interface Store
      * @param spec the search specification
      * @return the objects that match the search spec
      */
-    public Map<String,Object> search(String spec);
+    public Map<String,T> search(String spec);
 }

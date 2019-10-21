@@ -22,12 +22,10 @@ import spark.Response;
 import spark.Route;
 
 /**
- *
+ * Route that adds entries to a store.
  */
 public class StoreAdd implements Route
 {
-    public static final String SUCCESS_RESPONSE = 
-        "<html><body>201 Created</body></html>";
 
     private final Store store;
     private final Gson gson = new Gson();
@@ -43,17 +41,18 @@ public class StoreAdd implements Route
         String name = req.splat()[0];
         String json = req.body();
         
-        Object exists = this.store.add(name, gson.fromJson(json, Object.class));
+        Object exists = 
+            this.store.add(name, this.gson.fromJson(json, Object.class));
         
         if ( exists == null )
         {
             resp.status(201);
-            return SUCCESS_RESPONSE;
+            return "Created";
         }
         else
         {
             resp.status(409);
-            return exists;
+            return this.gson.toJson(exists);
         }
     }
 

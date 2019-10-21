@@ -1,22 +1,22 @@
 package org.oddcyb.items.filters;
 
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 /**
  * 
  */
-public class IsType implements Predicate<Object>
+public class IsType implements BiPredicate<String,Object>
 {
 
-    private final Class<Object> type;
+    private final Class type;
 
-    public IsType(Class<Object> type)
+    public IsType(Class type)
     {
         this.type = type;
     }
 
     @Override
-    public boolean test(Object object)
+    public boolean test(String name, Object object)
     {
         return this.type.isInstance(object);
     }

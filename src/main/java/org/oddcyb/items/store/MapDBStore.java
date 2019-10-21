@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * A store that is held in MapDB.
  */
-public class MapDBStore implements Store
+public class MapDBStore implements Store<Object>
 {
     
     private final DB db;
@@ -76,6 +76,7 @@ public class MapDBStore implements Store
                 result.put(entry.getKey(), entry.getValue());
             });
         }
+
         // TODO - Use spec to find results
         
         return result;
