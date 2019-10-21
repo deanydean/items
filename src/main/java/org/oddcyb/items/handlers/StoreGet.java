@@ -22,14 +22,14 @@ import spark.Response;
 import spark.Route;
 
 /**
- *
+ * Route that gets entries from a store.
  */
 public class StoreGet implements Route
 {
-    private final Store store;
+    private final Store<? extends Object> store;
     private final Gson gson = new Gson();
     
-    public StoreGet(Store store)
+    public StoreGet(Store<? extends Object> store)
     {
         this.store = store;
     }
@@ -56,7 +56,7 @@ public class StoreGet implements Route
             else
             {
                 resp.status(404);
-                return Store.NOT_FOUND;
+                return "Not Found";
             }
         }
     }

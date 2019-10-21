@@ -4,7 +4,7 @@ apply plugin: "java"
 apply plugin: "maven"
 
 group = "org.oddcyb"
-version = "1.0.0-SNAPSHOT"
+version = "2.0.0-SNAPSHOT"
 
 task run (type: JavaExec, dependsOn: classes){
     if(project.hasProperty('appargs')){
@@ -44,7 +44,7 @@ repositories {
 
 dependencies {
     compile "com.google.code.gson:gson:2.8.2"
-    compile "com.sparkjava:spark-core:2.7.2"
+    compile "com.sparkjava:spark-core:2.9.1"
     compile "net.sf.jopt-simple:jopt-simple:6.0-alpha-2"
     compile "com.mashape.unirest:unirest-java:1.4.9"
     compile "org.mapdb:mapdb:3.0.5"

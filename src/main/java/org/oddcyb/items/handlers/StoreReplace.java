@@ -22,7 +22,7 @@ import spark.Response;
 import spark.Route;
 
 /**
- *
+ * Route that replaces entries in a store.
  */
 public class StoreReplace implements Route
 {
@@ -41,7 +41,18 @@ public class StoreReplace implements Route
         String name = req.splat()[0];
         String json = req.body();
         
-        return this.store.replace(name, this.gson.fromJson(json, Object.class));
+        Object replaced =
+            this.store.replace(name, this.gson.fromJson(json, Object.class));
+
+        if ( replaced != null )
+        {
+            return this.gson.toJson(replaced);
+        }
+        else
+        {
+            resp.status(404);
+            return "Not found";
+        }
     }
     
 }

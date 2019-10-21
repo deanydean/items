@@ -20,12 +20,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
+
 import org.oddcyb.items.store.HeapStore;
 import org.oddcyb.items.store.MapDBStore;
 import org.oddcyb.items.store.MongoDBStore;
 import org.oddcyb.items.store.Store;
+
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
 import spark.Spark;
 
 /**

@@ -13,11 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-FROM gradle
+FROM gradle:jdk11
 
 EXPOSE 9999
 
 ENV ITEMS_HOME=/opt/items
+
+USER root
 
 # Build everything we need
 ADD src ${ITEMS_HOME}/src
