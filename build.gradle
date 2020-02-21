@@ -37,6 +37,13 @@ jar {
     archiveName = "items.jar"
 }
 
+test {
+    useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
 repositories {
     mavenLocal()
     mavenCentral()
@@ -50,6 +57,7 @@ dependencies {
     compile "org.mapdb:mapdb:3.0.5"
     compile "org.mongodb:mongodb-driver:3.6.3"
     runtime "org.slf4j:slf4j-simple:1.7.25"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.5.2"
 }
 
 

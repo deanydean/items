@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, 2019, Matt Dean
+ * Copyright 2016, 2020, Matt Dean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ public class StoreAdd implements Route
 
     private static final String QUERY_PARAM_MODE_ADD = "add";
     private static final String QUERY_PARAM_MODE_REPLACE = "replace";
-    private static final String QUERY_PARAM_MODE_APPEND = "append";
 
     private final Store store;
     private final Gson gson = new Gson();
@@ -52,8 +51,6 @@ public class StoreAdd implements Route
         String modeParam = req.queryParamOrDefault("mode", QUERY_PARAM_MODE_ADD);
 
         Object object = this.gson.fromJson(json, Object.class);
-        Object existing = this.store.read(name);
-
         Object result = null;
 
         if ( modeParam.equalsIgnoreCase(QUERY_PARAM_MODE_REPLACE) )
@@ -61,32 +58,17 @@ public class StoreAdd implements Route
             this.store.replace(name, object);
             result = "Replaced";
         }
-        else if ( existing != null && 
-                  modeParam.equalsIgnoreCase(QUERY_PARAM_MODE_APPEND) )
-        {
-            List entries = null;
-
-            if ( existing instanceof List )
-            {
-                entries = (List) existing;
-            }
-            else
-            {
-                entries = new ArrayList<Object>();
-                entries.add(existing);
-            }
-
-            entries.add(object);
-            this.store.replace(name, entries);
-            result = "Appended";
-        }
         else
         {
+            Object existing = this.store.add(name, object);
+
             if ( existing != null )
             {
                 resp.status(409);
                 return this.gson.toJson(existing);
             }
+
+            result = "Added";
         }
 
         resp.status(201);

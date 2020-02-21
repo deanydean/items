@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Matt Dean
+ * Copyright 2019, 2020, Matt Dean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,37 +15,24 @@
  */
 package org.oddcyb.items.store;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * Store that holds typed data.
  */
-public class TypedStore implements Store<Object>
+public class MapStore implements Store
 {
-    public static final String META_TYPE    = "type";
-    public static final String META_CREATED = "created";
-
-    private static final DateTimeFormatter TIME_FORMAT = 
-        DateTimeFormatter.ofPattern("yyyyMMdd:HHmmss.n");
-
-    private final Store<Item> store;
-    private final Type type;
+    private final Store store;
 
     /**
-     * Create a new TypedStore for Type objects.
+     * Create a new MapStore
      * 
      * @param store the store to hold the Items
-     * @param type the Type of objects to allow in the store
      */
-    public TypedStore(Store<Item> store, Type type)
+    public MapStore(Store store)
     {
         this.store = store;
-        this.type = type;
     }
 
     /**
@@ -56,22 +43,14 @@ public class TypedStore implements Store<Object>
      */
     public boolean accepts(Object object)
     {
-        if ( object instanceof Item )
-        {
-            return this.type == 
-                Type.valueOf(((Item) object).getMeta(META_TYPE));
-        }
-        else
-        {
-            return this.type.isType(object);
-        }
+        return (object instanceof Map);
     }
 
     @Override
     public Object read(String name)
     {
-        Item item = this.store.read(name);
-        return (this.accepts(item)) ? item.getValue() : null;
+        Object item = this.store.read(name);
+        return (this.accepts(item)) ? item : null;
     }
 
     @Override
@@ -79,7 +58,7 @@ public class TypedStore implements Store<Object>
     {
         if ( this.accepts(value) )
         {
-            Item existing = this.store.add(name, newItem(value));
+            Object existing = this.store.read(name);
 
             if ( existing != null && !this.accepts(existing) )
             {
@@ -87,7 +66,7 @@ public class TypedStore implements Store<Object>
                     "Invalid existing value for "+name);   
             }
 
-            return existing;
+            return this.store.add(name, value);
         }
         else
         {
@@ -98,11 +77,11 @@ public class TypedStore implements Store<Object>
     @Override
     public Object replace(String name, Object newValue)
     {
-        Item existing = this.store.read(name);
+        Object existing = this.store.read(name);
 
         if ( this.accepts(existing) && this.accepts(newValue) )
         {
-            return this.store.replace(name, newItem(newValue));
+            return this.store.replace(name, newValue);
         }
         else
         {
@@ -111,7 +90,7 @@ public class TypedStore implements Store<Object>
     }
 
     @Override
-    public Item delete(String name)
+    public Object delete(String name)
     {
         // Check object exists first (will confirm filtered type)
         if ( this.read(name) != null )
@@ -133,37 +112,6 @@ public class TypedStore implements Store<Object>
                    .stream()
                    .filter( (e) -> this.accepts(e.getValue()) )
                    .collect( Collectors.toMap( (e) -> e.getKey(), 
-                                               (e) -> e.getValue().getValue() ));
-    }
-
-    private Item newItem(Object object)
-    {
-        Map<String,String> meta = new HashMap<>() {{
-            put(META_TYPE, type.name());
-            put(META_CREATED, LocalDateTime.now().format(TIME_FORMAT));
-        }};
-
-        return new Item(object, meta);
-    }
-
-    /**
-     * Types of objects for a TypedStore.
-     */
-    public static enum Type 
-    {
-        MAP(Map.class),
-        LIST(List.class);
-
-        private final Class<? extends Object> typeClass;
-
-        private Type(Class<? extends Object> clazz)
-        {
-            typeClass = clazz;
-        }
-
-        public boolean isType(Object object)
-        {
-            return this.typeClass.isInstance(object);
-        }
+                                               (e) -> e.getValue() ));
     }
 }

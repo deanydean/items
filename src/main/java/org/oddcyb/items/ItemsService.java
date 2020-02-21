@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, 2019, Matt Dean
+ * Copyright 2016, 2020, Matt Dean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,9 @@ import org.oddcyb.items.handlers.StoreGet;
 import org.oddcyb.items.handlers.StoreReplace;
 import org.oddcyb.items.store.InvalidTypeValueException;
 import org.oddcyb.items.store.Item;
+import org.oddcyb.items.store.ListStore;
+import org.oddcyb.items.store.MapStore;
 import org.oddcyb.items.store.Store;
-import org.oddcyb.items.store.TypedStore;
 
 import static spark.Spark.*;
 
@@ -39,7 +40,7 @@ public class ItemsService
     public static final String SERVICE_BASE = "/items";
     
     private final String serviceBase;
-    private final Store<Item> store;
+    private final Store store;
     
     /**
      * Create a service located at the provided base path.
@@ -47,7 +48,7 @@ public class ItemsService
      * @param serviceBase the base path for the service
      * @param store the store that holds that data for this service
      */
-    public ItemsService(String serviceBase, Store<Item> store)
+    public ItemsService(String serviceBase, Store store)
     {
         this.serviceBase = serviceBase;
         this.store = store;
@@ -64,13 +65,11 @@ public class ItemsService
 
         // Link for map types
         // /items/maps/*     <- all Map types
-        link(base+"/maps", 
-             new TypedStore(this.store, TypedStore.Type.MAP));
+        link(base+"/maps", new MapStore(this.store));
 
         // Link for list types
         // /items/lists/*    <- all List types
-        link(base+"/lists",
-             new TypedStore(this.store, TypedStore.Type.LIST));
+        link(base+"/lists", new ListStore(this.store));
 
         // TODO - /items/queues/*   <- all Queue types
         // TODO - /items/deques/*   <- all Deque types
@@ -97,7 +96,7 @@ public class ItemsService
         });
     }
 
-    private static void link(String path, Store<Object> store)
+    private static void link(String path, Store store)
     {
         path(path, () ->
         {

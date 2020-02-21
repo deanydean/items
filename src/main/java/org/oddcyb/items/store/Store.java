@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, 2019, Matt Dean
+ * Copyright 2016, 2020, Matt Dean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * A store of items.
  */
-public interface Store<T>
+public interface Store
 {
 
     public static final String SEARCH_ALL = "*";
@@ -31,7 +31,7 @@ public interface Store<T>
      * @param name the name of the object.
      * @return the object or null if the object did not exist
      */
-    public T read(String name);
+    public Object read(String name);
     
     /**
      * Add an object to the store.
@@ -41,7 +41,7 @@ public interface Store<T>
      * @return the object that already exists in the store or null if the object
      * was added.
      */
-    public T add(String name, T value);
+    public Object add(String name, Object value);
     
     /**
      * Replace an object in the store.
@@ -49,7 +49,7 @@ public interface Store<T>
      * @param newValue the replacement object
      * @return the object that was replaced or null if the object did not exist
      */
-    public T replace(String name, T newValue);
+    public Object replace(String name, Object newValue);
     
     /**
      * Delete an object from the store.
@@ -57,7 +57,7 @@ public interface Store<T>
      * @param name the name of the object
      * @return the object that was deleted or null if the object did not exist
      */
-    public T delete(String name);
+    public Object delete(String name);
     
     /**
      * Search for objects in the store.
@@ -65,5 +65,5 @@ public interface Store<T>
      * @param spec the search specification
      * @return the objects that match the search spec
      */
-    public Map<String,T> search(String spec);
+    public Map<String,Object> search(String spec);
 }

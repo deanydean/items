@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, 2019, Matt Dean
+ * Copyright 2016, 2020, Matt Dean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * A store that is held in MapDB.
  */
-public class MapDBStore implements Store<Object>
+public class MapDBStore implements Store
 {
     
     private final DB db;

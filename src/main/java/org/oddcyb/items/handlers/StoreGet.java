@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, 2019, Matt Dean
+ * Copyright 2018, 2020, Matt Dean
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,10 @@ import spark.Route;
  */
 public class StoreGet implements Route
 {
-    private final Store<? extends Object> store;
+    private final Store store;
     private final Gson gson = new Gson();
     
-    public StoreGet(Store<? extends Object> store)
+    public StoreGet(Store store)
     {
         this.store = store;
     }
