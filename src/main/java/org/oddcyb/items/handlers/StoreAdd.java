@@ -15,8 +15,13 @@
  */
 package org.oddcyb.items.handlers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gson.Gson;
+
 import org.oddcyb.items.store.Store;
+
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -26,6 +31,10 @@ import spark.Route;
  */
 public class StoreAdd implements Route
 {
+
+    private static final String QUERY_PARAM_MODE_ADD = "add";
+    private static final String QUERY_PARAM_MODE_REPLACE = "replace";
+    private static final String QUERY_PARAM_MODE_APPEND = "append";
 
     private final Store store;
     private final Gson gson = new Gson();
@@ -40,20 +49,48 @@ public class StoreAdd implements Route
     {
         String name = req.splat()[0];
         String json = req.body();
-        
-        Object exists = 
-            this.store.add(name, this.gson.fromJson(json, Object.class));
-        
-        if ( exists == null )
+        String modeParam = req.queryParamOrDefault("mode", QUERY_PARAM_MODE_ADD);
+
+        Object object = this.gson.fromJson(json, Object.class);
+        Object existing = this.store.read(name);
+
+        Object result = null;
+
+        if ( modeParam.equalsIgnoreCase(QUERY_PARAM_MODE_REPLACE) )
         {
-            resp.status(201);
-            return "Created";
+            this.store.replace(name, object);
+            result = "Replaced";
+        }
+        else if ( existing != null && 
+                  modeParam.equalsIgnoreCase(QUERY_PARAM_MODE_APPEND) )
+        {
+            List entries = null;
+
+            if ( existing instanceof List )
+            {
+                entries = (List) existing;
+            }
+            else
+            {
+                entries = new ArrayList<Object>();
+                entries.add(existing);
+            }
+
+            entries.add(object);
+            this.store.replace(name, entries);
+            result = "Appended";
         }
         else
         {
-            resp.status(409);
-            return this.gson.toJson(exists);
+            if ( existing != null )
+            {
+                resp.status(409);
+                return this.gson.toJson(existing);
+            }
         }
+
+        resp.status(201);
+        return result;
     }
 
 }
