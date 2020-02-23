@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.oddcyb.items.store.DynamoDBStore;
 import org.oddcyb.items.store.HeapStore;
 import org.oddcyb.items.store.MapDBStore;
 import org.oddcyb.items.store.MongoDBStore;
@@ -63,6 +64,12 @@ public class Start
                 (int) options.valueOf("mongodb-port"),
                 options.valueOf("mongodb-db").toString(),
                 options.valueOf("mongodb-col").toString()
+            );
+        }
+        else if ( options.has("dynamodb") )
+        {
+            store = new DynamoDBStore(
+                options.valueOf("dynamodb-table").toString()
             );
         }
      
@@ -151,6 +158,12 @@ public class Start
         parser.accepts("mongodb-col", "mongodb collection")
             .requiredIf("mongodb")
             .withRequiredArg();
+
+        parser.accepts("dynamodb", "Hold data in AWS DynamoDB");
+
+        parser.accepts("dynamodb-table", "DynamoDB table name")
+              .requiredIf("dynamodb")
+              .withRequiredArg();
         
         return parser.parse(args);
     }

@@ -15,9 +15,6 @@
  */
 package org.oddcyb.items.handlers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.Gson;
 
 import org.oddcyb.items.store.Store;
