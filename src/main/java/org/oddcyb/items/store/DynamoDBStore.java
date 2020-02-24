@@ -18,13 +18,13 @@ package org.oddcyb.items.store;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
-import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import com.google.gson.Gson;
 
 /**
@@ -32,6 +32,8 @@ import com.google.gson.Gson;
  */
 public class DynamoDBStore implements Store
 {
+    private static final Logger LOG = 
+        Logger.getLogger(DynamoDBStore.class.getName());
 
     private static final String KEY_NAME = "item-name";
     private static final String KEY_VALUE = "item-value";
@@ -60,21 +62,49 @@ public class DynamoDBStore implements Store
             new GetItemRequest().withKey(key)
                                 .withTableName(this.tableName);
 
-        try
+        Map<String,AttributeValue> item = this.ddb.getItem(request).getItem();
+
+        if ( item != null )
         {
-            Map<String,AttributeValue> item = this.ddb.getItem(request).getItem();
-            return item.get(KEY_VALUE);
+            var type = item.get(KEY_TYPE).getS();
+
+            if ( type.equalsIgnoreCase(TYPE_MAP) )
+            {
+                return item.entrySet()
+                           .stream()
+                           .filter( (e) -> !e.getKey().equalsIgnoreCase(KEY_NAME) &&
+                                           !e.getKey().equalsIgnoreCase(KEY_TYPE) )
+                           .collect(Collectors.toMap( (e) -> e.getKey(), 
+                                                      (e) -> e.getValue().getS() ) );
+            }
+            else if ( type.equalsIgnoreCase(TYPE_LIST) )
+            {
+                var value = item.get(KEY_VALUE);
+                return value.getSS();
+            }
+            else if ( type.equalsIgnoreCase(TYPE_OBJECT) )
+            {
+                return stringToObject(item.get(KEY_VALUE).getS());
+            }
+            else
+            {
+                return "UNKNOWN DATA";
+            }
         }
-        catch ( ResourceNotFoundException rnfe )
-        {
-            // Object doesn't exist
-            return null;
-        }
+
+        // Not Found
+        return null;
     }
 
     @Override
     public Object add(String name, Object value)
     {
+        LOG.info( () -> "Adding "+name+"->"+value );
+        if ( value == null )
+        {
+            throw new NullPointerException();
+        }
+
         Map<String,AttributeValue> item = new HashMap<>();
         item.put(KEY_NAME, new AttributeValue(name));
 
@@ -106,6 +136,8 @@ public class DynamoDBStore implements Store
             item.put(KEY_VALUE, new AttributeValue(objectToString(value)));
         }
 
+        LOG.info( () -> "Adding "+item+" to "+this.tableName );
+        this.ddb.putItem(this.tableName, item);
         return null;
     }
 
