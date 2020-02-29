@@ -28,7 +28,7 @@ import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
 import com.google.gson.Gson;
 
 /**
- * A Store that is helf in an AWS DynamoDB
+ * A Store that is held in an AWS DynamoDB table.
  */
 public class DynamoDBStore implements Store
 {
@@ -66,30 +66,7 @@ public class DynamoDBStore implements Store
 
         if ( item != null )
         {
-            var type = item.get(KEY_TYPE).getS();
-
-            if ( type.equalsIgnoreCase(TYPE_MAP) )
-            {
-                return item.entrySet()
-                           .stream()
-                           .filter( (e) -> !e.getKey().equalsIgnoreCase(KEY_NAME) &&
-                                           !e.getKey().equalsIgnoreCase(KEY_TYPE) )
-                           .collect(Collectors.toMap( (e) -> e.getKey(), 
-                                                      (e) -> e.getValue().getS() ) );
-            }
-            else if ( type.equalsIgnoreCase(TYPE_LIST) )
-            {
-                var value = item.get(KEY_VALUE);
-                return value.getSS();
-            }
-            else if ( type.equalsIgnoreCase(TYPE_OBJECT) )
-            {
-                return stringToObject(item.get(KEY_VALUE).getS());
-            }
-            else
-            {
-                return "UNKNOWN DATA";
-            }
+            return itemToObject(item);
         }
 
         // Not Found
@@ -105,14 +82,89 @@ public class DynamoDBStore implements Store
             throw new NullPointerException();
         }
 
-        Map<String,AttributeValue> item = new HashMap<>();
-        item.put(KEY_NAME, new AttributeValue(name));
-
         Object existing = this.read(name);
         if ( existing != null )
         {
             return existing;
         }
+
+        Map<String,AttributeValue> item = objectToItem(name, value);
+
+        LOG.info( () -> "Adding "+item+" to "+this.tableName );
+        this.ddb.putItem(this.tableName, item);
+
+        return null;
+    }
+
+    @Override
+    public Object replace(String name, Object newValue)
+    {
+        LOG.info( () -> "Replacing "+name+"->"+newValue );
+        if ( newValue == null )
+        {
+            throw new NullPointerException();
+        }
+
+        Object existing = this.delete(name);
+        if ( existing == null )
+        {
+            return null;
+        }
+
+        this.add(name, newValue);
+
+        return existing;
+    }
+
+    @Override
+    public Object delete(String name)
+    {
+        Map<String,AttributeValue> item = new HashMap<>();
+        item.put(KEY_NAME, new AttributeValue(name));
+
+        var deleteResult = ddb.deleteItem(this.tableName, item, "ALL_OLD");
+        return itemToObject(deleteResult.getAttributes());
+    }
+
+    @Override
+    public Map<String, Object> search(String spec)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public static Object itemToObject(Map<String,AttributeValue> item)
+    {
+        var type = item.get(KEY_TYPE).getS();
+
+        if ( type.equalsIgnoreCase(TYPE_MAP) )
+        {
+            return item.entrySet()
+                       .stream()
+                       .filter( (e) -> !e.getKey().equalsIgnoreCase(KEY_NAME) &&
+                                       !e.getKey().equalsIgnoreCase(KEY_TYPE) )
+                       .collect(Collectors.toMap( (e) -> e.getKey(), 
+                                                  (e) -> valueToString(e.getValue()) ) );
+        }
+        else if ( type.equalsIgnoreCase(TYPE_LIST) )
+        {
+            var value = item.get(KEY_VALUE);
+            return value.getSS();
+        }
+        else if ( type.equalsIgnoreCase(TYPE_OBJECT) )
+        {
+            return stringToObject(valueToString(item.get(KEY_VALUE)));
+        }
+        else
+        {
+            return "UNKNOWN DATA";
+        }
+    }
+
+    public static Map<String,AttributeValue> objectToItem(String name, Object value)
+    {
+        Map<String,AttributeValue> item = new HashMap<>();
+        item.put(KEY_NAME, new AttributeValue(name));
 
         if ( value instanceof Map )
         {
@@ -136,30 +188,7 @@ public class DynamoDBStore implements Store
             item.put(KEY_VALUE, new AttributeValue(objectToString(value)));
         }
 
-        LOG.info( () -> "Adding "+item+" to "+this.tableName );
-        this.ddb.putItem(this.tableName, item);
-        return null;
-    }
-
-    @Override
-    public Object replace(String name, Object newValue)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Object delete(String name)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Map<String, Object> search(String spec)
-    {
-        // TODO Auto-generated method stub
-        return null;
+        return item;
     }
 
     public static String objectToString(Object object)
@@ -170,5 +199,10 @@ public class DynamoDBStore implements Store
     public static Object stringToObject(String str)
     {
         return new Gson().fromJson(str, Map.class);
+    }
+
+    public static String valueToString(AttributeValue value)
+    {
+        return value.getS().replaceAll("^\"|\"$", "");
     }
 }
