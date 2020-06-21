@@ -56,6 +56,7 @@ dependencies {
     compile "com.mashape.unirest:unirest-java:1.4.9"
     compile "org.mapdb:mapdb:3.0.5"
     compile "org.mongodb:mongodb-driver:3.6.3"
+    compile "com.amazonaws:aws-java-sdk-dynamodb:1.11.+"
     runtime "org.slf4j:slf4j-simple:1.7.25"
     testImplementation "org.junit.jupiter:junit-jupiter:5.5.2"
 }

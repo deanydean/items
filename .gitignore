@@ -5,3 +5,4 @@ bin/
 var
 etc/keystore
 etc/keystore-pwd
+.settings/

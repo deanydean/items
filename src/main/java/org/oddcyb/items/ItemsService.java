@@ -22,7 +22,6 @@ import org.oddcyb.items.handlers.StoreAdd;
 import org.oddcyb.items.handlers.StoreGet;
 import org.oddcyb.items.handlers.StoreReplace;
 import org.oddcyb.items.store.InvalidTypeValueException;
-import org.oddcyb.items.store.Item;
 import org.oddcyb.items.store.ListStore;
 import org.oddcyb.items.store.MapStore;
 import org.oddcyb.items.store.Store;
