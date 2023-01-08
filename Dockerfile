@@ -16,8 +16,6 @@
 
 # Image that can build items
 FROM gradle:jdk11 AS builder
-
-# Build everything we need
 ADD src /home/gradle/src
 ADD build.gradle /home/gradle/build.gradle
 RUN mkdir -p .gradle && \
@@ -26,7 +24,6 @@ RUN mkdir -p .gradle && \
 
 # The items service image
 FROM openjdk:11-jre
-
 ENV ITEMS_HOME=/opt/items
 COPY --from=builder /home/gradle/build/libs/items.jar \
                     ${ITEMS_HOME}/lib/items.jar

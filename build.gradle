@@ -1,7 +1,6 @@
 //
 // Main build file for Items
 apply plugin: "java"
-apply plugin: "maven"
 
 group = "org.oddcyb"
 version = "2.0.0-SNAPSHOT"
@@ -21,19 +20,14 @@ jar {
     }
 
     from {
-        configurations.compile.collect { 
-            it.isDirectory() ? it : zipTree(it).matching {
-                exclude { it.path.contains("META-INF") }
-            }
-        }
-        
-        configurations.runtime.collect {
+        configurations.runtimeClasspath.collect {
             it.isDirectory() ? it : zipTree(it).matching {
                 exclude { it.path.contains("META-INF") }
             }
         }
     }
 
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveName = "items.jar"
 }
 
@@ -50,14 +44,14 @@ repositories {
 }
 
 dependencies {
-    compile "com.google.code.gson:gson:2.8.2"
-    compile "com.sparkjava:spark-core:2.9.1"
-    compile "net.sf.jopt-simple:jopt-simple:6.0-alpha-2"
-    compile "com.mashape.unirest:unirest-java:1.4.9"
-    compile "org.mapdb:mapdb:3.0.5"
-    compile "org.mongodb:mongodb-driver:3.6.3"
-    compile "com.amazonaws:aws-java-sdk-dynamodb:1.11.+"
-    runtime "org.slf4j:slf4j-simple:1.7.25"
+    implementation "com.google.code.gson:gson:2.8.2"
+    implementation "com.sparkjava:spark-core:2.9.1"
+    implementation "net.sf.jopt-simple:jopt-simple:6.0-alpha-2"
+    implementation "com.mashape.unirest:unirest-java:1.4.9"
+    implementation "org.mapdb:mapdb:3.0.5"
+    implementation "org.mongodb:mongodb-driver:3.6.3"
+    implementation "com.amazonaws:aws-java-sdk-dynamodb:1.11.+"
+    implementation "org.slf4j:slf4j-simple:1.7.25"
     testImplementation "org.junit.jupiter:junit-jupiter:5.5.2"
 }
 
