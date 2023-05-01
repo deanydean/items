@@ -1,6 +1,9 @@
 //
 // Main build file for Items
-apply plugin: "java"
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
 
 group = "org.oddcyb"
 version = "2.0.0-SNAPSHOT"
@@ -14,28 +17,19 @@ task run (type: JavaExec, dependsOn: classes){
     classpath = sourceSets.main.runtimeClasspath
 }
 
-jar {
-    manifest {
-        attributes "Main-Class": "org.oddcyb.items.Start"
-    }
-
-    from {
-        configurations.runtimeClasspath.collect {
-            it.isDirectory() ? it : zipTree(it).matching {
-                exclude { it.path.contains("META-INF") }
-            }
-        }
-    }
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    archiveName = "items.jar"
-}
-
 test {
     useJUnitPlatform()
 	testLogging {
 		events "passed", "skipped", "failed"
 	}
+}
+
+publishing {
+    publications {
+        itemsLibrary(MavenPublication) {
+            from components.java
+        }
+    }
 }
 
 repositories {
