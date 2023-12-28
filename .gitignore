@@ -6,3 +6,5 @@ var
 etc/keystore
 etc/keystore-pwd
 .settings/
+items.db
+keys.txt

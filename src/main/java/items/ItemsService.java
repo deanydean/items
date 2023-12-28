@@ -3,6 +3,7 @@ package items;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import items.authorizers.Authorizer;
 import items.handlers.StoreAdd;
 import items.handlers.StoreGet;
 import items.handlers.StoreReplace;
@@ -25,6 +26,7 @@ public class ItemsService
     
     private final String serviceBase;
     private final Store store;
+    private final Authorizer<String> authorizer;
     
     /**
      * Create a service located at the provided base path.
@@ -32,10 +34,10 @@ public class ItemsService
      * @param serviceBase the base path for the service
      * @param store the store that holds that data for this service
      */
-    public ItemsService(String serviceBase, Store store)
-    {
+    public ItemsService(String serviceBase, Store store, Authorizer<String> authorizer){
         this.serviceBase = serviceBase;
         this.store = store;
+        this.authorizer = authorizer;
     }
     
     /**
@@ -46,6 +48,15 @@ public class ItemsService
         String base = this.serviceBase;
         
         LOG.log(Level.INFO, "Starting data service at {0}", base);
+
+        if ( authorizer != null ) {
+            before((req, res) -> {
+                var key = req.headers("x-api-key");
+                if ( key == null || ! this.authorizer.isAuthorized(key) ){
+                    halt(401, "Forbidden");
+                }
+            });
+        }
 
         // Link for map types
         // /items/maps/*     <- all Map types

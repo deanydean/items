@@ -21,9 +21,6 @@ docker-image:
 	docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_VERSION) .
 
 run: $(JAR_FILE)
-	java -jar $<
-
-run-mapdb: $(JAR_FILE)
 	java -jar $< \
 		--mapdb \
 		--mapdb-file $(MAPDB_FILE) \

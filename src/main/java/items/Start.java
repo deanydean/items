@@ -6,6 +6,8 @@ import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import items.authorizers.Authorizer;
+import items.authorizers.KeyAuthorizer;
 import items.store.DynamoDBStore;
 import items.store.HeapStore;
 import items.store.MapDBStore;
@@ -23,7 +25,7 @@ public class Start
 {
     private static final Logger LOG = Logger.getLogger(Start.class.getName());
     
-    public void startServices(String[] args) throws IOException
+    public void startServices(String[] args) throws Exception
     {
         OptionSet options = parseArguments(args);
         
@@ -73,8 +75,15 @@ public class Start
                         options.valueOf("truststore-pwd-file").toString()))),
                 true);
         }
+
+        Authorizer<String> authorizer = null;
+        if (options.has("require-keys"))
+        {
+            var keys = Files.readAllLines(Paths.get("keys.txt"));
+            authorizer = new KeyAuthorizer(keys);
+        }
         
-        new ItemsService(path, store).start();
+        new ItemsService(path, store, authorizer).start();
     }
 
     public static OptionSet parseArguments(String[] args)
@@ -149,6 +158,8 @@ public class Start
         parser.accepts("dynamodb-table", "DynamoDB table name")
               .requiredIf("dynamodb")
               .withRequiredArg();
+
+        parser.accepts("require-keys", "Require API keys for all incoming request");
         
         return parser.parse(args);
     }
