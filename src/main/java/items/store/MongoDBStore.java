@@ -1,18 +1,3 @@
-/*
- * Copyright 2016, 2020, Matt Dean
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package items.store;
 
 import com.mongodb.MongoClient;
@@ -20,24 +5,14 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import java.util.Map;
-import java.util.logging.Logger;
 import org.bson.Document;
 
-/**
- *
- */
 public class MongoDBStore implements Store
-{
-    private static final Logger LOG = 
-        Logger.getLogger(MongoDBStore.class.getName());
-    
+{   
     public static final String NAME_ENTRY = "name";
     public static final String OBJECT_ENTRY = "object";
     
-    private final String host;
-    private final int port;
     private final String databaseName;
-    private final String collectionName;
     
     private final MongoClient client;
     private final MongoDatabase database;
@@ -46,10 +21,7 @@ public class MongoDBStore implements Store
     public MongoDBStore(String host, int port, String database, 
             String collection)
     {
-        this.host = host;
-        this.port = port;
         this.databaseName = database;
-        this.collectionName = collection;
         
         this.client = new MongoClient(host, port);
         this.database = this.client.getDatabase(databaseName);
