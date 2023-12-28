@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.oddcyb.items;
+package items;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,11 +21,11 @@ import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.oddcyb.items.store.DynamoDBStore;
-import org.oddcyb.items.store.HeapStore;
-import org.oddcyb.items.store.MapDBStore;
-import org.oddcyb.items.store.MongoDBStore;
-import org.oddcyb.items.store.Store;
+import items.store.DynamoDBStore;
+import items.store.HeapStore;
+import items.store.MapDBStore;
+import items.store.MongoDBStore;
+import items.store.Store;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;

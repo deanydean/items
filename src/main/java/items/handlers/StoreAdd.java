@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.oddcyb.items.handlers;
+package items.handlers;
 
 import com.google.gson.Gson;
 
-import org.oddcyb.items.store.Store;
+import items.store.Store;
 
 import spark.Request;
 import spark.Response;

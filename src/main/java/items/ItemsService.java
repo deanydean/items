@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.oddcyb.items;
+package items;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.oddcyb.items.handlers.StoreAdd;
-import org.oddcyb.items.handlers.StoreGet;
-import org.oddcyb.items.handlers.StoreReplace;
-import org.oddcyb.items.store.InvalidTypeValueException;
-import org.oddcyb.items.store.ListStore;
-import org.oddcyb.items.store.MapStore;
-import org.oddcyb.items.store.Store;
+import items.handlers.StoreAdd;
+import items.handlers.StoreGet;
+import items.handlers.StoreReplace;
+import items.store.InvalidTypeValueException;
+import items.store.ListStore;
+import items.store.MapStore;
+import items.store.Store;
 
 import static spark.Spark.*;
 

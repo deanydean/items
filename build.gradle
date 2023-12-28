@@ -6,15 +6,33 @@ plugins {
 }
 
 group = "org.oddcyb"
-version = "2.0.0-SNAPSHOT"
 
 task run (type: JavaExec, dependsOn: classes){
     if(project.hasProperty('appargs')){
         args(appargs.split(','))
     }
     description = "Run Items Service"
-    main = "org.oddcyb.items.Start"
+    main = "items.Start"
     classpath = sourceSets.main.runtimeClasspath
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': "items.Start"
+        )
+    }
+
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it).matching {
+                include {
+                    it.path.contains(".class") ||
+                    it.path.contains(".properties")
+                }
+            }
+        }
+    }
 }
 
 test {
@@ -40,7 +58,7 @@ repositories {
 dependencies {
     implementation "com.google.code.gson:gson:2.8.2"
     implementation "com.sparkjava:spark-core:2.9.1"
-    implementation "net.sf.jopt-simple:jopt-simple:6.0-alpha-2"
+    implementation "net.sf.jopt-simple:jopt-simple:6.0-alpha-3"
     implementation "com.mashape.unirest:unirest-java:1.4.9"
     implementation "org.mapdb:mapdb:3.0.5"
     implementation "org.mongodb:mongodb-driver:3.6.3"
