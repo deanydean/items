@@ -27,21 +27,15 @@ public class MapDBStore implements Store
     }
 
     @Override
-    public Object read(String name)
+    public Object get(String name)
     {
         return this.getMap().get(name);
     }
 
     @Override
-    public Object add(String name, Object value)
+    public Object set(String name, Object value)
     {
-        return this.getMap().putIfAbsent(name, value);
-    }
-
-    @Override
-    public Object replace(String name, Object newValue)
-    {
-        return this.getMap().replace(name, newValue);
+        return this.getMap().put(name, value);
     }
 
     @Override

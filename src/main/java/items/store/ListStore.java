@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.logging.Logger;
 
 /**
  * Store that holds typed data.
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 public class ListStore implements Store
 {
 
+    private static final Logger LOG = Logger.getLogger(ListStore.class.getName());
     private final Store store;
 
     /**
@@ -35,65 +37,37 @@ public class ListStore implements Store
     }
 
     @Override
-    public Object read(String name)
+    public Object get(String name)
     {
-        Object item = this.store.read(name);
-        return (this.accepts(item)) ? item : null;
+        Object item = this.store.get(name);
+        return (item != null && this.accepts(item)) ? item : null;
     }
 
     @Override
-    public Object add(String name, Object value)
+    public Object set(String name, Object value)
     {
-        Object existing = this.store.read(name);
+        Object existing = this.store.get(name);
 
         if ( existing != null && !this.accepts(existing) )
         {
-            throw new InvalidTypeValueException(
-                "Invalid existing value for "+name);   
+            LOG.warning(() -> "Existing "+name+" is not valid List type: "+existing.getClass());  
         }
 
-        if ( existing != null )
+        if ( this.accepts(value) )
         {
-            List entries = (List) existing;
-            entries.add(value);
-            this.store.replace(name, entries);
-            return null;
+            return this.store.set(name, value);
         }
-        else
-        {
-            if ( this.accepts(value) )
-            {
-                return this.store.add(name, existing);
-            }
-            else
-            {
-                List entries = new ArrayList<>();
-                entries.add(value);
-                return this.store.add(name, entries);
-            }
-        }
-    }
 
-    @Override
-    public Object replace(String name, Object newValue)
-    {
-        Object existing = this.store.read(name);
-
-        if ( this.accepts(existing) && this.accepts(newValue) )
-        {
-            return this.store.replace(name, newValue);
-        }
-        else
-        {
-            throw new InvalidTypeValueException("Invalid value for "+name);
-        }
+        var list = (existing != null) ? (List<Object>) existing : new ArrayList<Object>();
+        list.add(value);
+        return this.store.set(name, list);
     }
 
     @Override
     public Object delete(String name)
     {
         // Check object exists first (will confirm filtered type)
-        if ( this.read(name) != null )
+        if ( this.get(name) != null )
         {
             return this.store.delete(name);
         }

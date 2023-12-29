@@ -38,7 +38,7 @@ public class DynamoDBStore implements Store
     }
 
     @Override
-    public Object read(String name)
+    public Object get(String name)
     {
         Map<String,AttributeValue> key = new HashMap<>();
         key.put(KEY_NAME, new AttributeValue(name));
@@ -59,18 +59,18 @@ public class DynamoDBStore implements Store
     }
 
     @Override
-    public Object add(String name, Object value)
+    public Object set(String name, Object value)
     {
-        LOG.info( () -> "Adding "+name+"->"+value );
+        LOG.info( () -> "Setting "+name+"->"+value );
         if ( value == null )
         {
             throw new NullPointerException();
         }
 
-        Object existing = this.read(name);
+        Object existing = this.get(name);
         if ( existing != null )
         {
-            return existing;
+            this.delete(name);
         }
 
         Map<String,AttributeValue> item = objectToItem(name, value);
@@ -79,26 +79,6 @@ public class DynamoDBStore implements Store
         this.ddb.putItem(this.tableName, item);
 
         return null;
-    }
-
-    @Override
-    public Object replace(String name, Object newValue)
-    {
-        LOG.info( () -> "Replacing "+name+"->"+newValue );
-        if ( newValue == null )
-        {
-            throw new NullPointerException();
-        }
-
-        Object existing = this.delete(name);
-        if ( existing == null )
-        {
-            return null;
-        }
-
-        this.add(name, newValue);
-
-        return existing;
     }
 
     @Override

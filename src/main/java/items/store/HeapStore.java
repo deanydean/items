@@ -16,23 +16,17 @@ public class HeapStore implements Store
     private final Map<String,Object> dataMap = new ConcurrentHashMap<>();
 
     @Override
-    public Object read(String name)
+    public Object get(String name)
     {
         return this.dataMap.get(name);
     }
     
     @Override
-    public Object add(String name, Object value)
+    public Object set(String name, Object value)
     {
-        return this.dataMap.putIfAbsent(name, value);
+        return this.dataMap.put(name, value);
     }
     
-    @Override
-    public Object replace(String name, Object newValue)
-    {
-        return this.dataMap.replace(name, newValue);
-    }
-
     @Override
     public Object delete(String name)
     {

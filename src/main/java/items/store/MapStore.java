@@ -1,6 +1,7 @@
 package items.store;
 
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -8,6 +9,8 @@ import java.util.stream.Collectors;
  */
 public class MapStore implements Store
 {
+    private static final Logger LOG = Logger.getLogger(MapStore.class.getName());
+
     private final Store store;
 
     /**
@@ -28,48 +31,33 @@ public class MapStore implements Store
      */
     public boolean accepts(Object object)
     {
-        return (object instanceof Map);
+        return Map.class.isAssignableFrom(object.getClass());
     }
 
     @Override
-    public Object read(String name)
+    public Object get(String name)
     {
-        Object item = this.store.read(name);
-        return (this.accepts(item)) ? item : null;
+        Object item = this.store.get(name);
+        return (item != null && this.accepts(item)) ? item : null;
     }
 
     @Override
-    public Object add(String name, Object value)
+    public Object set(String name, Object value)
     {
-        if ( this.accepts(value) )
+        if ( value != null && this.accepts(value) )
         {
-            Object existing = this.store.read(name);
+            Object existing = this.store.get(name);
 
             if ( existing != null && !this.accepts(existing) )
             {
-                throw new InvalidTypeValueException(
-                    "Invalid existing value for "+name);   
+                LOG.warning(() -> "Existing "+name+" is not valid Map type: "+existing.getClass());  
             }
 
-            return this.store.add(name, value);
+            return this.store.set(name, value);
         }
         else
         {
-            throw new InvalidTypeValueException("Invalid value for "+name);
-        }
-    }
-
-    @Override
-    public Object replace(String name, Object newValue)
-    {
-        Object existing = this.store.read(name);
-
-        if ( this.accepts(existing) && this.accepts(newValue) )
-        {
-            return this.store.replace(name, newValue);
-        }
-        else
-        {
+            LOG.warning(() -> "Unable to add "+name+" is not a Map: "+value);
             throw new InvalidTypeValueException("Invalid value for "+name);
         }
     }
@@ -78,7 +66,7 @@ public class MapStore implements Store
     public Object delete(String name)
     {
         // Check object exists first (will confirm filtered type)
-        if ( this.read(name) != null )
+        if ( this.get(name) != null )
         {
             return this.store.delete(name);
         }

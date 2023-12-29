@@ -1,10 +1,12 @@
 package items;
 
 import com.google.gson.Gson;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.async.Callback;
-import com.mashape.unirest.http.exceptions.UnirestException;
+
+import kong.unirest.core.Callback;
+import kong.unirest.core.HttpResponse;
+import kong.unirest.core.Unirest;
+import kong.unirest.core.UnirestException;
+
 import java.util.List;
 import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
@@ -27,7 +29,10 @@ public class ItemsClient
     {   
         try
         {
-            return Unirest.get(this.url+"/"+name).asString().getBody();
+            return Unirest.get(this.url+"/"+name)
+                          .header("Accept", "*/*")
+                          .asString()
+                          .getBody();
         }
         catch ( UnirestException ue )
         {
@@ -48,7 +53,7 @@ public class ItemsClient
     {
         try
         {
-            return Unirest.put(this.url+"/"+name).body(name)
+            return Unirest.put(this.url+"/"+name).body(object)
                 .asString().getBody();
         }
         catch ( UnirestException ue )
@@ -62,7 +67,7 @@ public class ItemsClient
     public void put(String name, String object, Consumer<String> onComplete,
             Consumer<CompletionException> onFail, Runnable onCancel)
     {
-        Unirest.put(this.url+"/"+name).body(name)
+        Unirest.put(this.url+"/"+name).body(object)
             .asStringAsync(new AsyncCallback<>(onComplete, onFail, onCancel));
     }
     
@@ -133,5 +138,27 @@ public class ItemsClient
             this.onCancel.run();
         }
         
+    }
+
+    public static void main(String[] args) {
+        var op = args[0];
+        var key = args[1];
+        var value = (args.length > 2) ? args[2] : null;
+
+        var items = new ItemsClient(System.getenv("ITEMS_URL"));
+
+        switch (op) {
+            case "get":
+                System.out.println(items.get(key));
+                break;
+        
+            case "put":
+                items.put(key, value);
+                break;
+
+            default:
+                System.err.println("Unknown op: "+op);
+                break;
+        }
     }
 }

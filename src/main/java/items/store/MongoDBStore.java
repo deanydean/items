@@ -29,7 +29,7 @@ public class MongoDBStore implements Store
     }
 
     @Override
-    public Object read(String name)
+    public Object get(String name)
     {
         Document result = this.collection
             .find(Filters.eq(NAME_ENTRY, name))
@@ -39,42 +39,28 @@ public class MongoDBStore implements Store
     }
 
     @Override
-    public Object add(String name, Object value) {
-        // Make sure the object doesn't aleady exist
-        Object existing = this.read(name);
+    public Object set(String name, Object value) {
+        Object existing = this.get(name);
         if ( existing != null )
         {
-            return existing;
+            this.collection.updateOne(
+                Filters.eq(NAME_ENTRY, name),
+                new Document("$SET", new Document(OBJECT_ENTRY, value))
+            );
+        } else {
+            // Add the new entry
+            Document doc = new Document();
+            doc.append(NAME_ENTRY, name);
+            doc.append(OBJECT_ENTRY, value);
+            this.collection.insertOne(doc);
         }
-        
-        // Add the new entry
-        Document doc = new Document();
-        doc.append(NAME_ENTRY, name);
-        doc.append(OBJECT_ENTRY, value);
-        this.collection.insertOne(doc);
-        
-        return null;
-    }
 
-    @Override
-    public Object replace(String name, Object newValue) {
-        Object existing = this.read(name);
-        if ( existing == null )
-        {
-            return null;
-        }
-        
-        this.collection.updateOne(
-            Filters.eq(NAME_ENTRY, name),
-            new Document("$SET", new Document(OBJECT_ENTRY, newValue))
-        );
-        
         return existing;
     }
 
     @Override
     public Object delete(String name) {
-        Object existing = this.read(name);
+        Object existing = this.get(name);
         
         this.collection.deleteOne(Filters.eq(NAME_ENTRY, name));
     

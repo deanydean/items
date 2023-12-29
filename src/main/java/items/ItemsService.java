@@ -2,11 +2,12 @@ package items;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Map;
+import java.util.List;
 
 import items.authorizers.Authorizer;
-import items.handlers.StoreAdd;
+import items.handlers.StoreSet;
 import items.handlers.StoreGet;
-import items.handlers.StoreReplace;
 import items.store.InvalidTypeValueException;
 import items.store.ListStore;
 import items.store.MapStore;
@@ -60,11 +61,11 @@ public class ItemsService
 
         // Link for map types
         // /items/maps/*     <- all Map types
-        link(base+"/maps", new MapStore(this.store));
+        link(base+"/maps", new MapStore(this.store), Map.class);
 
         // Link for list types
         // /items/lists/*    <- all List types
-        link(base+"/lists", new ListStore(this.store));
+        link(base+"/lists", new ListStore(this.store), List.class);
 
         // TODO - /items/queues/*   <- all Queue types
         // TODO - /items/deques/*   <- all Deque types
@@ -78,8 +79,8 @@ public class ItemsService
 
         // Handle exceptions and log errors
         exception(InvalidTypeValueException.class, (ex, req, resp) -> {
-            LOG.log(Level.INFO, "Invalid type provided for {0}", 
-                    req.pathInfo());
+            LOG.log(Level.INFO, "Invalid type provided for {0} : {1}", 
+                    new Object[] { req.pathInfo(), ex });
             resp.status(400); // Bad request
             resp.body("Bad Request - Invalid type");
         });
@@ -91,13 +92,13 @@ public class ItemsService
         });
     }
 
-    private static void link(String path, Store store)
+    private static <T> void link(String path, Store store, Class<T> type)
     {
         path(path, () ->
         {
             get("/*", new StoreGet(store));
-            put("/*", new StoreReplace(store));
-            post("/*", new StoreAdd(store));
+            put("/*", new StoreSet<T>(store, type));
+            post("/*", new StoreSet<T>(store, type));
             delete("/*", (req, resp) -> store.delete(req.splat()[0]));
         });
     }

@@ -32,7 +32,7 @@ public class StoreGet implements Route
         else
         {
             // Get the named object
-            Object obj = this.store.read(splatParams[0]);
+            Object obj = this.store.get(splatParams[0]);
 
             if ( obj != null )
             {
