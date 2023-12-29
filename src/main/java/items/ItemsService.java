@@ -65,7 +65,7 @@ public class ItemsService
 
         // Link for list types
         // /items/lists/*    <- all List types
-        link(base+"/lists", new ListStore(this.store), List.class);
+        link(base+"/lists", new ListStore(this.store), Object.class);
 
         // TODO - /items/queues/*   <- all Queue types
         // TODO - /items/deques/*   <- all Deque types

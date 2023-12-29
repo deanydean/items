@@ -46,11 +46,13 @@ public class ListStore implements Store
     @Override
     public Object set(String name, Object value)
     {
-        Object existing = this.store.get(name);
+        var existing = this.store.get(name);
 
         if ( existing != null && !this.accepts(existing) )
         {
-            LOG.warning(() -> "Existing "+name+" is not valid List type: "+existing.getClass());  
+            var existingType = existing.getClass();
+            LOG.warning(() -> "Existing "+name+" is not valid List type: "+existingType);
+            existing = null; 
         }
 
         if ( this.accepts(value) )

@@ -152,7 +152,7 @@ public class ItemsClient
                 System.out.println(items.get(key));
                 break;
         
-            case "put":
+            case "set":
                 items.put(key, value);
                 break;
 
