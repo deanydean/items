@@ -1,5 +1,5 @@
 # Image that can build items
-FROM gradle:jdk11 AS builder
+FROM gradle:jdk21 AS builder
 ADD src /home/gradle/src
 ADD build.gradle /home/gradle/build.gradle
 RUN mkdir -p .gradle && \
@@ -7,9 +7,9 @@ RUN mkdir -p .gradle && \
     gradle build
 
 # The items service image
-FROM openjdk:11-jre
+FROM amazoncorretto:21-alpine
 ENV ITEMS_HOME=/opt/items
-COPY --from=builder /home/gradle/build/libs/items.jar \
+COPY --from=builder /home/gradle/build/libs/gradle.jar \
                     ${ITEMS_HOME}/lib/items.jar
 
 # Set up the runtime environment
@@ -18,10 +18,11 @@ ADD etc/items.conf ${ITEMS_HOME}/etc/items.conf
 ADD items ${ITEMS_HOME}/items
 
 # Set the runtime user
-RUN useradd --system --home ${ITEMS_HOME} items && \
+RUN adduser -S -h ${ITEMS_HOME} items && \
     chown -R items ${ITEMS_HOME}
 
 # Run the service
 USER items
 EXPOSE 9999
+ENV ITEMS_OPTS ""
 CMD ${ITEMS_HOME}/items --jar "${ITEMS_HOME}/lib/items.jar"
