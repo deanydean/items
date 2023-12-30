@@ -78,7 +78,12 @@ public class Start
         Authorizer<String> authorizer = null;
         if (options.has("require-keys"))
         {
-            var keys = Files.readAllLines(Paths.get("keys.txt"));
+            var keyFile = "keys.txt";
+            if (options.has("keys-file")) {
+                keyFile = options.valueOf("keys-file").toString();
+            }
+
+            var keys = Files.readAllLines(Paths.get(keyFile));
             authorizer = new KeyAuthorizer(keys);
         }
         
@@ -159,7 +164,11 @@ public class Start
               .withRequiredArg();
 
         parser.accepts("require-keys", "Require API keys for all incoming request");
-        
+
+        parser.accepts("keys-file", "The file containing the allowed API keys for all incoming request")
+              .withRequiredArg();
+
+
         return parser.parse(args);
     }
     

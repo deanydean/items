@@ -1,0 +1,36 @@
+#!/bin/bash
+
+#
+# Items server startup script
+#
+set -o errexit -o nounset -o pipefail
+
+: "${ITEMS_KEY_FILE:="keys.txt"}"
+: "${ITEMS_HOME:="$(readlink -m "$(dirname $0)")"}"
+: "${ITEMS_CONFIG_FILE:="${ITEMS_HOME}/etc/items.conf"}"
+: "${ITEMS_JAR_FILE:="${ITEMS_HOME}/build/libs/items.jar"}"
+: "${ITEMS_API_KEYS:=""}"
+
+: "${JAVA_OPTS:=""}"
+: "${ITEMS_OPTS:=""}"
+
+if [ -f "${ITEMS_CONFIG_FILE}" ]
+then
+    echo "Loading config file ${ITEMS_CONFIG_FILE}"
+    . "${ITEMS_CONFIG_FILE}"
+else
+    echo "Unable to find config file ${ITEMS_CONFIG_FILE}" 1>&2
+fi
+
+if [ ! -f "${ITEMS_JAR_FILE}" ]
+then
+    echo "Unable to find items in ${ITEMS_JAR_FILE}" 1>&2
+    exit 1
+fi
+
+if [ -n "${ITEMS_API_KEYS}" ]
+then
+    echo "${ITEMS_API_KEYS}" | sed 's|,|\n|g' > "${ITEMS_KEY_FILE}"
+fi
+
+exec java ${JAVA_OPTS} -jar ${ITEMS_JAR_FILE} ${ITEMS_OPTS} $@

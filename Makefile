@@ -21,18 +21,11 @@ docker-image:
 	docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_VERSION) .
 
 run: $(JAR_FILE)
-	java -jar $< \
-		--mapdb \
-		--mapdb-file $(MAPDB_FILE) \
-		--mapdb-map items
+	./items-server
 
 run-mongo: $(JAR_FILE)
-	java -jar $< \
-		--mongodb \
-		--mongdb-host $(MONGODB_HOST) \
-    	--mongodb-port $(MONGODB_PORT) \
-		--mongo-db items \
-		--mongodb-col items-collection
-
+	ITEMS_CONFIG_FILE="./etc/items-mongodb.conf" \
+		./items-server
+		
 $(JAR_FILE):
 	gradle build

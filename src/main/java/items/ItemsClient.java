@@ -145,6 +145,11 @@ public class ItemsClient
         var key = args[1];
         var value = (args.length > 2) ? args[2] : null;
 
+        var apiKey = System.getenv("ITEMS_API_KEY");
+        if ( apiKey != null && !apiKey.isBlank()){
+            Unirest.config().addDefaultHeader("x-api-key", apiKey);
+        }
+
         var items = new ItemsClient(System.getenv("ITEMS_URL"));
 
         switch (op) {

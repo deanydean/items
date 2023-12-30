@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#
+# Items client startup script
+#
+set -o errexit -o nounset -o pipefail
+
+: "${ITEMS_HOME:="$(readlink -m "$(dirname $0)")"}"
+: "${ITEMS_JAR_FILE:="${ITEMS_HOME}/build/libs/items.jar"}"
+: "${ITEMS_API_KEY:=""}"
+
+: "${JAVA_OPTS:=""}"
+: "${ITEMS_OPTS:=""}"
+
+if [ ! -f "${ITEMS_JAR_FILE}" ]
+then
+    echo "Unable to find items in ${ITEMS_JAR_FILE}" 1>&2
+    exit 1
+fi
+
+exec java ${JAVA_OPTS} -cp ${ITEMS_JAR_FILE} items.ItemsClient ${ITEMS_OPTS} $@

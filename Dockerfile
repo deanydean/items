@@ -10,12 +10,12 @@ RUN mkdir -p .gradle && \
 FROM amazoncorretto:21-alpine
 ENV ITEMS_HOME=/opt/items
 COPY --from=builder /home/gradle/build/libs/gradle.jar \
-                    ${ITEMS_HOME}/lib/items.jar
+                    ${ITEMS_HOME}/build/libs/items.jar
 
 # Set up the runtime environment
 RUN mkdir -p ${ITEMS_HOME}/var
 ADD etc/items.conf ${ITEMS_HOME}/etc/items.conf
-ADD items ${ITEMS_HOME}/items
+ADD items-server ${ITEMS_HOME}/items-server
 
 # Set the runtime user
 RUN adduser -S -h ${ITEMS_HOME} items && \
@@ -24,5 +24,4 @@ RUN adduser -S -h ${ITEMS_HOME} items && \
 # Run the service
 USER items
 EXPOSE 9999
-ENV ITEMS_OPTS ""
-CMD ${ITEMS_HOME}/items --jar "${ITEMS_HOME}/lib/items.jar"
+CMD sh ${ITEMS_HOME}/items-server
